@@ -17,7 +17,7 @@ class RewardShaping(gym.Wrapper):
         self._previous_xy = None
 
     def step(self, action):
-        observations, rewards, dones, infos = self.env.step(action)
+        observations, rewards, dones, truncated, infos = self.env.step(action)
         for agent_idx in range(self.get_num_agents()):
             reward = rewards[agent_idx]
             reward -= 0.0001
@@ -27,7 +27,7 @@ class RewardShaping(gym.Wrapper):
             rewards[agent_idx] = reward
             self._previous_xy[agent_idx] = observations[agent_idx]['xy']
 
-        return observations, rewards, dones, infos
+        return observations, rewards, dones, truncated, infos
 
     def reset(self):
         observation = self.env.reset()
@@ -55,7 +55,7 @@ class MultiMapWrapper(gym.Wrapper):
                 raise KeyError(f"No map matching: {pattern}")
 
     def step(self, action):
-        observations, rewards, done, info = self.env.step(action)
+        observations, rewards, done, truncated, info = self.env.step(action)
         cfg = self.grid_config
         if cfg.map_name:
             for agent_idx in range(self.get_num_agents()):
@@ -64,12 +64,17 @@ class MultiMapWrapper(gym.Wrapper):
                         if key == 'Done':
                             continue
                         info[agent_idx]['episode_extra_stats'][f'{key}-{cfg.map_name.split("-")[0]}'] = value
-        return observations, rewards, done, info
+        return observations, rewards, done, truncated, info
 
     def reset(self, **kwargs):
         if self._configs is not None and len(self._configs) >= 1:
             cfg = deepcopy(self._configs[self._rnd.integers(0, len(self._configs))])
             self.env.unwrapped.grid_config = cfg
+        # 删除kwargs字典中的某个键值对
+        if 'seed' in kwargs:
+            kwargs.pop('seed')
+        if 'options' in kwargs:
+            kwargs.pop('options')
         return self.env.reset(**kwargs)
 
 

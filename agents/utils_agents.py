@@ -24,16 +24,15 @@ def run_algorithm(algo, map_name='sc1-AcrosstheCape', max_episode_steps=512, see
     if animate:
         anim_dir = str(pathlib.Path('renders') / algo_name)
         env = AnimationMonitor(env, AnimationConfig(directory=anim_dir))
-    obs = env.reset()
+    obs, infos = env.reset()
     algo.after_reset()
     results_holder = ResultsHolder()
 
     dones = [False for _ in range(len(obs))]
-    infos = [{'is_active': True} for _ in range(len(obs))]
     rew = [0 for _ in range(len(obs))]
     with torch.no_grad():
         while True:
-            obs, rew, dones, infos = env.step(algo.act(obs, rew, dones, infos))
+            obs, rew, dones, truncated, infos = env.step(algo.act(obs, rew, dones, infos))
             results_holder.after_step(infos)
             algo.after_step(dones)
 
