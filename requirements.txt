@@ -1,5 +1,5 @@
 numpy>=1.21.5,<=1.23.1
-pydantic>=1.8.2,<=1.9.1
+pydantic==1.10.12
 wandb==0.12.1
 torch==1.8.1
 sample-factory==1.121.3
