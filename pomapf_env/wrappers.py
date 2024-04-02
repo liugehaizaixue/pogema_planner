@@ -1,17 +1,16 @@
 import re
 from copy import deepcopy
-
-import gym
+import gymnasium
+from gymnasium import ObservationWrapper
+from gymnasium.spaces import Box, Dict
 import numpy as np
-from gym import ObservationWrapper
-from gym.spaces import Box
 from numpy import float32
 from pogema import GridConfig
 
 from pomapf_env.custom_maps import MAPS_REGISTRY
 
 
-class RewardShaping(gym.Wrapper):
+class RewardShaping(gymnasium.Wrapper):
     def __init__(self, env):
         super().__init__(env)
         self._previous_xy = None
@@ -36,7 +35,7 @@ class RewardShaping(gym.Wrapper):
         return observation
 
 
-class MultiMapWrapper(gym.Wrapper):
+class MultiMapWrapper(gymnasium.Wrapper):
     def __init__(self, env):
         super().__init__(env)
         self._configs = []
@@ -84,8 +83,8 @@ class MatrixObservationWrapper(ObservationWrapper):
         super().__init__(env)
         # full_size = self.config.obs_radius * 2 + 1
         full_size = self.env.observation_space['obstacles'].shape[0]
-        self.observation_space = gym.spaces.Dict(
-            obs=gym.spaces.Box(0.0, 1.0, shape=(3, full_size, full_size)),
+        self.observation_space = gymnasium.spaces.Dict(
+            obs=gymnasium.spaces.Box(0.0, 1.0, shape=(3, full_size, full_size)),
             xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
             target_xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
         )
