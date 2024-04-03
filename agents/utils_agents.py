@@ -36,7 +36,7 @@ def run_algorithm(algo, map_name='sc1-AcrosstheCape', max_episode_steps=512, see
             results_holder.after_step(infos)
             algo.after_step(dones)
 
-            if all(dones):
+            if all(dones) or all(truncated):
                 break
 
     results = results_holder.get_final()
