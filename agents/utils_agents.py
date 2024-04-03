@@ -32,7 +32,8 @@ def run_algorithm(algo, map_name='sc1-AcrosstheCape', max_episode_steps=512, see
     rew = [0 for _ in range(len(obs))]
     with torch.no_grad():
         while True:
-            obs, rew, dones, truncated, infos = env.step(algo.act(obs, rew, dones, infos))
+            actions = algo.act(obs, rew, dones, infos)
+            obs, rew, dones, truncated, infos = env.step(actions)
             results_holder.after_step(infos)
             algo.after_step(dones)
 

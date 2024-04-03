@@ -56,7 +56,7 @@ class AStar:
         next_node = None
         if self.goal in self.CLOSED:
             next_node = self.goal
-        elif use_best_node:
+        elif use_best_node: # 如果没找到goal则使用前往best node ？
             next_node = (self.best_node.i, self.best_node.j)
         if next_node is not None and next_node != self.start:
             while self.CLOSED[next_node] != self.start:
@@ -81,12 +81,14 @@ class AStar:
         self.best_node = Node(self.start, 0, self.h(self.start))
 
     def update_path(self, start, goal):
-        if self.desired_position and self.desired_position != start:
-            self.bad_actions.add(self.desired_position)
-            if self.start == start:
-                self.other_agents = self.other_agents.union(self.bad_actions)
-        else:
-            self.bad_actions.clear()
+        # if self.desired_position and self.desired_position != start:
+        #     self.bad_actions.add(self.desired_position)
+        #     if self.start == start:
+        #         self.other_agents = self.other_agents.union(self.bad_actions)
+        #     else:
+        #         print(start)
+        # else:
+        #     self.bad_actions.clear()
         self.start = start
         self.goal = goal
         self.reset()

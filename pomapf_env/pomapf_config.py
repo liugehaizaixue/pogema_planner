@@ -8,5 +8,5 @@ from pogema import GridConfig
 
 class POMAPFConfig(GridConfig):
     integration: Literal['SampleFactory'] = 'SampleFactory'
-    collision_system: Literal['block_both'] = 'block_both'
+    collision_system: Literal['block_both','priority'] = 'priority'
     observation_type: Literal['POMAPF', 'MAPF'] = 'POMAPF'
