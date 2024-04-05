@@ -2,7 +2,8 @@ import numpy as np
 from pogema import GridConfig
 import random
 from planning.astar_no_grid import AStar, INF
-
+from utils.utils_debug import data_visualizer
+from copy import deepcopy
 
 class RePlanBase:
     def __init__(self, use_best_move: bool = True, max_steps: int = INF, algo_source='c++', seed=None,
@@ -33,7 +34,7 @@ class RePlanBase:
         action = []
 
         for k in range(num_agents):
-            self.previous_positions[k].append(obs[k]['xy'])
+            self.previous_positions[k].append([obs[k]['xy'],obs[k]['direction']])
             if obs[k]['xy'] == obs[k]['target_xy']:
                 action.append(None)
                 continue
@@ -54,6 +55,10 @@ class RePlanBase:
             self.planner[k].update_path(obs[k]['xy'], obs[k]['target_xy'])
             # path = self.planner[k].get_next_node(self.use_best_move)
             path = self.planner[k].get_path(self.use_best_move)
+            if data_visualizer.ego_idx is not None:
+                if k == data_visualizer.ego_idx:
+                    data_visualizer.ego_explored_map = self.planner[k].get_obstacles()
+                    data_visualizer.ego_path = deepcopy(path)
             if path is not None and path[1][0] < INF:
                 direction = obs[k]["direction"]
                 action.append(self.actions[self.generate_action(path[0],path[1],direction)])
@@ -163,23 +168,30 @@ class FixLoopsWrapper(NoPathSoRandomOrStayWrapper):
             path = self.previous_positions[idx]
             if len(path) > 1:
                 next_step = obs[idx]['xy']
+                previous_direction = obs[idx]['direction']
                 action = GridConfig().NEW_MOVES[actions[idx]]
-                direction = obs[idx]['direction']
                 """ 由于坐标系不同，x’ = y ； y'= -x 
                     direction[0] , direction[1]  = direction[1] , -direction[0]
                 """
                 if action == "FORWARD":
-                    next_pos = next_step[0] + direction[1] , next_step[1] -direction[0]
+                    next_pos = next_step[0] + previous_direction[1] , next_step[1] -previous_direction[0]
+                    next_direction = previous_direction
                 elif action == "WAIT":
                     next_pos = next_step
+                    next_direction = previous_direction
                 else:
                     next_pos = next_step
-                if path[-1] == next_pos or path[-2] == next_pos:
-                    if self.add_none_if_loop:
-                        actions[idx] = None
-                    elif next_pos == next_step:
-                        actions[idx] = self.get_random_move(obs, idx)
-                    elif self.rnd.random() < self.stay_if_loop_prob:
-                        actions[idx] = 0
-            self.previous_positions[idx].append(obs[idx]['xy'])
+                    if action == "TURN_LEFT":
+                        next_direction = [-previous_direction[1], previous_direction[0]]
+                    elif action == "TURN_RIGHT":
+                        next_direction = [previous_direction[1], -previous_direction[0]]
+
+                # if path[-1] == [next_pos, next_direction] or path[-2] == [next_pos, next_direction]:
+                #     if self.add_none_if_loop:
+                #         actions[idx] = None
+                #     elif next_pos == next_step:
+                #         actions[idx] = self.get_random_move(obs, idx)
+                #     elif self.rnd.random() < self.stay_if_loop_prob:
+                #         actions[idx] = 0
+            self.previous_positions[idx].append([obs[idx]['xy'], obs[idx]['direction']])
         return actions

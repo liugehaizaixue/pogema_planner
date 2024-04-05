@@ -113,3 +113,6 @@ class AStar:
         else:
             self.desired_position = None
             return None
+    
+    def get_obstacles(self):
+        return self.obstacles
