@@ -21,11 +21,14 @@ class AStarWithDirection:
     def __init__(self, max_steps: int = INF):
         self.start = None
         self.goal = None
+        self.last_pos = None
+        self.previous_other_agents = dict() # 不同角度的观察，最多是四个值
+        self.other_agents_in_memory =set() # 各个观察结果中 other agents 位置的汇总
         self.max_steps = max_steps
         self.OPEN = list()
         self.CLOSED = dict()
         self.obstacles = set()
-        self.other_agents = set()
+        self.other_agents = set() # 当前观察中 other agents 位置
         self.best_node = None
         self.desired_position = None
         self.bad_actions = set()
@@ -81,7 +84,7 @@ class AStarWithDirection:
                 self.best_node = u
             steps += 1
             for n in self.get_neighbours([u.i, u.j, u.z]):
-                if n not in self.CLOSED and (n[0], n[1]) not in self.other_agents:
+                if n not in self.CLOSED and (n[0], n[1]) not in self.other_agents_in_memory:
                     heappush(self.OPEN, Node( n , u.g + 1, self.h(n)))
                     self.CLOSED[n] = (u.i, u.j, u.z)
 
@@ -114,13 +117,25 @@ class AStarWithDirection:
         heappush(self.OPEN, Node(self.start, 0, self.h(self.start)))
         self.best_node = Node(self.start, 0, self.h(self.start))
 
-    def update_path(self, start, start_direction, goal):
-
+    def update_path(self, start, start_direction, goal, with_memory = True):
         self.start = (start[0], start[1], (start_direction[0], start_direction[1]))
-
         self.goal = goal
         self.reset()
+        self.add_constraint_by_memory(with_memory)
         self.compute_shortest_path()
+
+    def add_constraint_by_memory(self, with_memory = True):
+        if with_memory and self.last_pos and self.last_pos[0] == self.start[0] and self.last_pos[1] == self.start[1]:
+            # 相同位置
+            pass
+        else:  # 移动到了新位置,将记忆清空
+            self.previous_other_agents.clear()
+        # 添加本次观察到记忆中
+        self.other_agents_in_memory.clear()
+        self.previous_other_agents[self.start] = set(*[self.other_agents])
+        for value in self.previous_other_agents.values(): 
+            self.other_agents_in_memory.update(value)  
+        self.last_pos = self.start
 
     def get_path(self, use_best_node: bool):
         path = []
