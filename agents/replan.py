@@ -59,7 +59,7 @@ class RePlan:
 
 
 def example_replan(map_name='sc1-AcrosstheCape', max_episode_steps=512, seed=None, num_agents=64, animate=False):
-    algo = RePlan(RePlanConfig(max_planning_steps=1000))
+    algo = RePlan(RePlanConfig(max_planning_steps=10000))
     return run_algorithm(algo, map_name, max_episode_steps, seed, num_agents, animate)
 
 
