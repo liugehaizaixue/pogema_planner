@@ -1,4 +1,5 @@
 from heapq import heappop, heappush
+import random
 INF = 1000000000
 
 
@@ -80,7 +81,7 @@ class AStar:
         heappush(self.OPEN, Node(self.start, 0, self.h(self.start)))
         self.best_node = Node(self.start, 0, self.h(self.start))
 
-    def update_path(self, start, goal):
+    def update_path(self, start, start_direction, goal):
         # if self.desired_position and self.desired_position != start:
         #     self.bad_actions.add(self.desired_position)
         #     if self.start == start:
@@ -116,3 +117,32 @@ class AStar:
     
     def get_obstacles(self):
         return self.obstacles
+    
+    @staticmethod
+    def generate_action(start,target,direction):
+        """ 根据xy 与 target_xy发现
+            x轴 向下为正， y轴向右为正 
+            即 10,-24 位于 0,0的 左下方 下发10, 左方24
+            通过x' = y ; y' = -x进行坐标转换
+        """
+        target_direction = [target[1] - start[1], -(target[0] - start[0])]
+        # 计算两个向量的点积
+        dot_product = direction[0] * target_direction[0] + direction[1] * target_direction[1]
+        # 如果点积为正，说明两个向量同向
+        if dot_product > 0:
+            action = "FORWARD"
+        # 如果点积为负，说明两个向量反向
+        elif dot_product < 0:
+            action = random.choice(["TURN_LEFT", "TURN_RIGHT"])
+        else:
+            # 否则，需要检查两个向量是否垂直
+            # 如果两个向量垂直，它们没有左右关系，因此我们将返回 "垂直"
+            if direction[0] * target_direction[1] - direction[1] * target_direction[0] == 0:
+                """ target_direction为 0向量 """
+                action = 'WAIT'
+            # 如果两个向量不是垂直的，则它们必然有左右关系
+            elif direction[0] * target_direction[1] - direction[1] * target_direction[0] > 0:
+                action = "TURN_LEFT"
+            else:
+                action = "TURN_RIGHT"
+        return action

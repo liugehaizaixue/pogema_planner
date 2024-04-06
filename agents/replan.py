@@ -10,7 +10,7 @@ from planning.replan_algo import RePlanBase, FixLoopsWrapper, NoPathSoRandomOrSt
 
 
 class RePlanConfig(AlgoBase, extra=Extra.forbid):
-    name: Literal['RePlan', 'RePlanCPP', 'RePlanPP'] = 'RePlan'
+    name: Literal['A-with-direction', 'A-star'] = 'A-with-direction'
     num_process: int = 5
     fix_loops: bool = True
     no_path_random: bool = True
@@ -32,10 +32,10 @@ class RePlan:
         self.no_path_random = cfg.no_path_random
         self.use_best_move = cfg.use_best_move
         self.add_none_if_loop = cfg.add_none_if_loop
-        if cfg.name == 'RePlanCPP':
-            self.algo_source = 'c++'
+        if cfg.name == 'A-with-direction':
+            self.algo_name = 'A-with-direction'
         else:
-            self.algo_source = 'python'
+            self.algo_name = 'A-star'
         self.env = None
 
     def act(self, observations, rewards=None, dones=None, info=None, skip_agents=None):
@@ -47,7 +47,7 @@ class RePlan:
 
     def after_reset(self, ):
         self.agent = RePlanBase(use_best_move=self.use_best_move, max_steps=self.cfg.max_planning_steps,
-                                algo_source=self.algo_source, seed=self.cfg.seed)
+                                algo_name=self.algo_name, seed=self.cfg.seed)
 
         if self.fix_loops:
             self.agent = FixLoopsWrapper(self.agent, stay_if_loop_prob=self.stay_if_loop_prob,

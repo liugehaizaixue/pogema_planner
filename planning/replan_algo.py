@@ -1,12 +1,12 @@
 import numpy as np
 from pogema import GridConfig
-import random
-from planning.astar_no_grid import AStar, INF
-from utils.utils_debug import data_visualizer
+from planning.astar_no_grid import AStar
+from planning.astar_no_grid_with_direction import AStarWithDirection, INF
+# from utils.utils_debug import data_visualizer
 from copy import deepcopy
 
 class RePlanBase:
-    def __init__(self, use_best_move: bool = True, max_steps: int = INF, algo_source='c++', seed=None,
+    def __init__(self, use_best_move: bool = True, max_steps: int = INF, algo_name='A-with-direction', seed=None,
                  ignore_other_agents=False):
 
         self.use_best_move = use_best_move
@@ -15,9 +15,11 @@ class RePlanBase:
         # self.actions = {tuple(gc.MOVES[i]): i for i in range(len(gc.MOVES))}
         self.actions = {gc.NEW_MOVES[i]: i for i in range(len(gc.NEW_MOVES))}
         self.steps = 0
-
-
-        self.algo_source = AStar
+        self.algo_name = algo_name
+        if algo_name == 'A-with-direction':
+            self.algo_source = AStarWithDirection
+        else:
+            self.algo_source = AStar
         self.planner = None
         self.max_steps = max_steps
         self.previous_positions = None
@@ -44,59 +46,35 @@ class RePlanBase:
                 other_agents = None
             else:
                 # other_agents = np.transpose(np.nonzero(obs[k]['agents']))
-                other_agents = np.transpose(np.where(obs[k]['agents'] == 1))
+                if self.algo_name == 'A-with-direction':
+                # 忽略自身，以实现带方向的A*，即可以停留在原地
+                    _agents_matrix = deepcopy(obs[k]['agents'])
+                    _agents_matrix[obs_radius][obs_radius] = 0
+                    other_agents = np.transpose(np.where(_agents_matrix == 1))
+                else:
+                    other_agents = np.transpose(np.where(obs[k]['agents'] == 1))
             self.planner[k].update_obstacles(obstacles, other_agents,
                                              (obs[k]['xy'][0] - obs_radius, obs[k]['xy'][1] - obs_radius))
 
             if skip_agents and skip_agents[k]:
                 action.append(None)
                 continue
-
-            self.planner[k].update_path(obs[k]['xy'], obs[k]['target_xy'])
+            
+            self.planner[k].update_path(obs[k]['xy'],obs[k]["direction"], obs[k]['target_xy'])
             # path = self.planner[k].get_next_node(self.use_best_move)
             path = self.planner[k].get_path(self.use_best_move)
-            if data_visualizer.ego_idx is not None:
-                if k == data_visualizer.ego_idx:
-                    data_visualizer.ego_explored_map = self.planner[k].get_obstacles()
-                    data_visualizer.ego_path = deepcopy(path)
+            # if data_visualizer.ego_idx is not None:
+            #     if k == data_visualizer.ego_idx:
+            #         data_visualizer.ego_explored_map = self.planner[k].get_obstacles()
+            #         data_visualizer.ego_path = deepcopy(path)
             if path is not None and path[1][0] < INF:
                 direction = obs[k]["direction"]
-                action.append(self.actions[self.generate_action(path[0],path[1],direction)])
-                # action.append(self.actions[(path[1][0] - path[0][0], path[1][1] - path[0][1])])
+                action.append(self.actions[self.planner[k].generate_action(path[0],path[1],direction)])
             else:
                 action.append(None)
         self.steps += 1
         return action
     
-    @staticmethod
-    def generate_action(start,target,direction):
-        """ 根据xy 与 target_xy发现
-            x轴 向下为正， y轴向右为正 
-            即 10,-24 位于 0,0的 左下方 下发10, 左方24
-            通过x' = y ; y' = -x进行坐标转换
-        """
-        target_direction = [target[1] - start[1], -(target[0] - start[0])]
-        # 计算两个向量的点积
-        dot_product = direction[0] * target_direction[0] + direction[1] * target_direction[1]
-        # 如果点积为正，说明两个向量同向
-        if dot_product > 0:
-            action = "FORWARD"
-        # 如果点积为负，说明两个向量反向
-        elif dot_product < 0:
-            action = random.choice(["TURN_LEFT", "TURN_RIGHT"])
-        else:
-            # 否则，需要检查两个向量是否垂直
-            # 如果两个向量垂直，它们没有左右关系，因此我们将返回 "垂直"
-            if direction[0] * target_direction[1] - direction[1] * target_direction[0] == 0:
-                """ target_direction为 0向量 """
-                action = 'WAIT'
-            # 如果两个向量不是垂直的，则它们必然有左右关系
-            elif direction[0] * target_direction[1] - direction[1] * target_direction[0] > 0:
-                action = "TURN_LEFT"
-            else:
-                action = "TURN_RIGHT"
-        return action
-
     def get_path(self):
         results = []
         for idx in range(len(self.planner)):
