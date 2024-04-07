@@ -22,7 +22,6 @@ class RePlanBase:
             self.algo_source = AStar
         self.planner = None
         self.max_steps = max_steps
-        self.previous_positions = None
         self.rnd = np.random.default_rng(seed)
         self.ignore_other_agents = ignore_other_agents
 
@@ -30,13 +29,10 @@ class RePlanBase:
         num_agents = len(obs)
         if self.planner is None:
             self.planner = [self.algo_source(self.max_steps) for _ in range(num_agents)]
-        if self.previous_positions is None:
-            self.previous_positions = [[] for _ in range(num_agents)]
         obs_radius = len(obs[0]['obstacles']) // 2
         action = []
 
         for k in range(num_agents):
-            self.previous_positions[k].append([obs[k]['xy'],obs[k]['direction']])
             if obs[k]['xy'] == obs[k]['target_xy']:
                 action.append(None)
                 continue
@@ -144,32 +140,35 @@ class FixLoopsWrapper(NoPathSoRandomOrStayWrapper):
             if actions[idx] is None:
                 continue
             path = self.previous_positions[idx]
+            current_position = (obs[idx]['xy'] , obs[idx]['direction'])
             if len(path) > 1:
-                next_step = obs[idx]['xy']
-                previous_direction = obs[idx]['direction']
+                c_xy = obs[idx]['xy']
+                c_direction = obs[idx]['direction']
                 action = GridConfig().NEW_MOVES[actions[idx]]
-                """ 由于坐标系不同，x’ = y ； y'= -x 
-                    direction[0] , direction[1]  = direction[1] , -direction[0]
+                """ 由于坐标系不同，x’ = -y ； y'= x 
+                    direction[0] , direction[1]  = -direction[1] , direction[0]
                 """
                 if action == "FORWARD":
-                    next_pos = next_step[0] + previous_direction[1] , next_step[1] -previous_direction[0]
-                    next_direction = previous_direction
+                    n_xy = (c_xy[0] - c_direction[1] , c_xy[1] + c_direction[0] )
+                    n_direction = c_direction
+                    next_position = ( n_xy , n_direction )
                 elif action == "WAIT":
-                    next_pos = next_step
-                    next_direction = previous_direction
+                    next_position = ( c_xy , c_direction )
                 else:
-                    next_pos = next_step
                     if action == "TURN_LEFT":
-                        next_direction = [-previous_direction[1], previous_direction[0]]
+                        n_direction = [-c_direction[1], c_direction[0]]
+                        next_position = (c_xy, n_direction)
                     elif action == "TURN_RIGHT":
-                        next_direction = [previous_direction[1], -previous_direction[0]]
+                        n_direction = [c_direction[1], -c_direction[0]]
+                        next_position = (c_xy, n_direction)
 
-                # if path[-1] == [next_pos, next_direction] or path[-2] == [next_pos, next_direction]:
-                #     if self.add_none_if_loop:
-                #         actions[idx] = None
-                #     elif next_pos == next_step:
-                #         actions[idx] = self.get_random_move(obs, idx)
-                #     elif self.rnd.random() < self.stay_if_loop_prob:
-                #         actions[idx] = 0
-            self.previous_positions[idx].append([obs[idx]['xy'], obs[idx]['direction']])
+                last_few_path = path[-6:] # 从之前的六个时间步来判断是否存在loop
+                if next_position in last_few_path:
+                    if self.add_none_if_loop:
+                        actions[idx] = None
+                    # elif next_pos == next_step:
+                    #     actions[idx] = self.get_random_move(obs, idx)
+                    elif self.rnd.random() < self.stay_if_loop_prob: # 0.5概率保留原动作/wait
+                        actions[idx] = 0
+            self.previous_positions[idx].append( current_position )
         return actions
