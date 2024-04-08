@@ -24,7 +24,7 @@ from learning.epom_config import Environment
 from learning.grid_memory import MultipleGridMemory
 from pomapf_env.wrappers import MatrixObservationWrapper
 
-from train_epom import validate_config, register_custom_components
+from learning.register_env import validate_config, register_custom_components
 
 
 class EpomConfig(AlgoBase, extra=Extra.forbid):

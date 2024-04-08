@@ -1,7 +1,7 @@
 import numpy as np
 from sample_factory.utils.typing import Env
 from sample_factory.envs.env_utils import register_env
-
+from argparse import Namespace
 import gymnasium
 from learning.epom_config import Environment, Experiment
 from learning.grid_memory import GridMemoryWrapper
@@ -100,3 +100,14 @@ def register_pogema_envs(env_name):
 
 def register_custom_components(env_name):
     register_pogema_envs(env_name)
+
+
+def validate_config(config):
+    exp = Experiment(**config)
+    flat_config = Namespace(**exp.async_ppo.dict(),
+                            **exp.experiment_settings.dict(),
+                            **exp.global_settings.dict(),
+                            **exp.evaluation.dict(),
+                            full_config=exp.dict()
+                            )
+    return exp, flat_config

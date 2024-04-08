@@ -1,117 +1,80 @@
 import json
-import sys
 from argparse import Namespace
-from pathlib import Path
 
-import numpy as np
-import wandb
 import yaml
-from sample_factory.algorithms.utils.algo_utils import EXTRA_EPISODIC_STATS_PROCESSING, EXTRA_PER_POLICY_SUMMARIES
-from sample_factory.envs.env_registry import global_env_registry
-from sample_factory.run_algorithm import run_algorithm
+from sample_factory.cfg.arguments import parse_sf_args, parse_full_cfg
+
+from sample_factory.train import make_runner
+from sample_factory.algo.utils.misc import ExperimentStatus
 from sample_factory.utils.utils import log
 
-# noinspection PyUnresolvedReferences
-from learning.encoder import ResnetEncoder
-from learning.epom_config import Environment, Experiment
-from learning.grid_memory import GridMemoryWrapper
-from pomapf_env.env import make_pomapf
-from pomapf_env.wrappers import MatrixObservationWrapper
+import wandb
+
+from learning.epom_config import Experiment
+from learning.register_env import register_custom_components
+from learning.register_training_utils import register_custom_model, register_msg_handlers
 
 
-def make_env(env_cfg: Environment = Environment()):
-    env = make_pomapf(grid_config=env_cfg.grid_config)
-    return env
+def create_sf_config(exp: Experiment):
+    custom_argv = [f'--env={exp.env}']
+    parser, partial_cfg = parse_sf_args(argv=custom_argv, evaluation=False)
+    parser.set_defaults(**exp.dict())
+    final_cfg = parse_full_cfg(parser, argv=custom_argv)
+    return final_cfg
 
 
-def create_pogema_env(full_env_name, cfg=None, env_config=None):
-    environment_config: Environment = Environment(**cfg.full_config['environment'])
-    env = make_env(environment_config)
-    gm_radius = environment_config.grid_memory_obs_radius
-    env = GridMemoryWrapper(env, obs_radius=gm_radius if gm_radius else environment_config.grid_config.obs_radius)
-    env = MatrixObservationWrapper(env)
-    return env
+def run(config=None):
+    register_custom_model()
 
+    if config is None:
+        import argparse
 
-def register_custom_components():
-    global_env_registry().register_env(
-        env_name_prefix='POMAPF',
-        make_env_func=create_pogema_env,
-    )
+        parser = argparse.ArgumentParser(description='Process training config.')
 
-    EXTRA_EPISODIC_STATS_PROCESSING.append(pogema_extra_episodic_stats_processing)
-    EXTRA_PER_POLICY_SUMMARIES.append(pogema_extra_summaries)
+        parser.add_argument('--config_path', type=str, action="store", default='train-debug.yaml',
+                            help='path to yaml file with single run configuration', required=False)
 
+        parser.add_argument('--raw_config', type=str, action='store',
+                            help='raw json config', required=False)
 
-def pogema_extra_episodic_stats_processing(policy_id, stat_key, stat_value, cfg):
-    pass
+        parser.add_argument('--wandb_thread_mode', type=bool, action='store', default=False,
+                            help='Run wandb in thread mode. Usefull for some setups.', required=False)
 
+        params = parser.parse_args()
+        if params.raw_config:
+            params.raw_config = params.raw_config.replace("\'", "\"")
+            config = json.loads(params.raw_config)
+        else:
+            if params.config_path is None:
+                raise ValueError("You should specify --config_path or --raw_config argument!")
+            with open(params.config_path, "r") as f:
+                config = yaml.safe_load(f)
+    else:
+        params = Namespace(**config)
+        params.wandb_thread_mode = False
 
-def pogema_extra_summaries(policy_id, policy_avg_stats, env_steps, summary_writer, cfg):
-    for key in policy_avg_stats:
-        if key in ['reward', 'len', 'true_reward', 'Done']:
-            continue
-
-        avg = np.mean(np.array(policy_avg_stats[key][policy_id]))
-        summary_writer.add_scalar(key, avg, env_steps)
-        log.debug(f'{policy_id}-{key}: {round(float(avg), 3)}')
-
-
-def validate_config(config):
     exp = Experiment(**config)
-    flat_config = Namespace(**exp.async_ppo.dict(),
-                            **exp.experiment_settings.dict(),
-                            **exp.global_settings.dict(),
-                            **exp.evaluation.dict(),
-                            full_config=exp.dict()
-                            )
-    return exp, flat_config
+    flat_config = Namespace(**exp.dict())
+    env_name = exp.environment.env
+    log.debug(f'env_name = {env_name}')
+    register_custom_components(env_name)
 
+    log.info(flat_config)
 
-def select_free_dir_name(rood_dir, max_id=100000):
-    for cnt in range(1, max_id):
-        free_folder = f"{cnt}".zfill(4)
-        full_path = Path(rood_dir) / Path(free_folder)
-        if not full_path.exists():
-            return free_folder
-    raise KeyError(f"Can't select a folder in {max_id} attempts")
+    if exp.train_for_env_steps == 1_000_000:
+        exp.use_wandb = False
 
-
-def main():
-    import argparse
-
-    parser = argparse.ArgumentParser(description='Process training config.')
-
-    parser.add_argument('--config_path', type=str, action="store", default='configs/train-debug.yaml',
-                        help='path to yaml file with single run configuration', required=False)
-
-    parser.add_argument('--wandb_thread_mode', type=bool, action='store', default=False,
-                        help='Run wandb in thread mode. Usefull for some setups.', required=False)
-
-    params = parser.parse_args()
-
-    register_custom_components()
-    if params.config_path is None:
-        raise ValueError("You should specify --config_path or --raw_config argument!")
-    with open(params.config_path, "r") as f:
-        config = yaml.safe_load(f)
-
-    exp, flat_config = validate_config(config)
-    if exp.global_settings.experiments_root is None:
-        exp.global_settings.experiments_root = select_free_dir_name(exp.global_settings.train_dir)
-        exp, flat_config = validate_config(exp.dict())
-    log.debug(exp.global_settings.experiments_root)
-
-    if exp.global_settings.use_wandb:
+    if exp.use_wandb:
         import os
         if params.wandb_thread_mode:
             os.environ["WANDB_START_METHOD"] = "thread"
-        wandb.init(project=exp.name, config=exp.dict(), save_code=False, sync_tensorboard=True, anonymous="allow", )
+        wandb.init(project='Pogema-Planner', config=exp.dict(), save_code=False, sync_tensorboard=True,
+                   anonymous="allow", job_type=exp.environment.env, group='train')
 
-    status = run_algorithm(flat_config)
+    flat_config, runner = make_runner(create_sf_config(exp))
+    register_msg_handlers(flat_config, runner)
+    status = runner.init()
+    if status == ExperimentStatus.SUCCESS:
+        status = runner.run()
 
     return status
-
-
-if __name__ == '__main__':
-    sys.exit(main())
