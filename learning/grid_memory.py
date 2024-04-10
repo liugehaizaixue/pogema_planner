@@ -7,13 +7,17 @@ from pogema.grid import Grid
 
 class GridMemory:
     def __init__(self, start_r=32):
-        self.memory = np.zeros(shape=(start_r * 2 + 1, start_r * 2 + 1))  # memory.shape[0] 起始就是32
+        # self.memory = np.zeros(shape=(start_r * 2 + 1, start_r * 2 + 1))  # memory.shape[0] 起始就是32
+        self.memory = np.full(shape=(start_r * 2 + 1, start_r * 2 + 1), fill_value=-1)
 
     @staticmethod
     def try_to_insert(x, y, source, target):
         r = source.shape[0] // 2
         try:
-            target[x - r:x + r + 1, y - r:y + r + 1] = source
+            mask = (source >= 0)  # 创建一个布尔掩码，表示source中的元素是否为0或1
+            target_slice = target[x - r:x + r + 1, y - r:y + r + 1]
+            target_slice[mask] = source[mask]
+            # target[x - r:x + r + 1, y - r:y + r + 1] = source
             return True
         except ValueError:
             return False
@@ -22,7 +26,8 @@ class GridMemory:
         """ memory矩阵 扩充一倍 """
         m = self.memory
         r = self.memory.shape[0]
-        self.memory = np.zeros(shape=(r * 2 + 1, r * 2 + 1))
+        # self.memory = np.zeros(shape=(r * 2 + 1, r * 2 + 1))
+        self.memory = np.full(shape=(r * 2 + 1, r * 2 + 1), fill_value=-1)
         assert self.try_to_insert(r, r, m, self.memory)
 
     def update(self, x, y, obstacles):
@@ -76,7 +81,8 @@ class MultipleGridMemory:
         for agent_idx, obs in enumerate(observations):  # 修改agent矩阵大小，但agent没有记忆中的位置
 
             if rr <= r:
-                agents = np.zeros(shape=(r * 2 + 1, r * 2 + 1))
+                # agents = np.zeros(shape=(r * 2 + 1, r * 2 + 1))
+                agents = np.full(shape = (r * 2 + 1, r * 2 + 1), fill_value=-1)  # 创建-1矩阵 ，原本不可见区域全为0，而现在存在不可见区域设为-1
                 agents[r - rr:r + rr + 1, r - rr: r + rr + 1] = obs['agents']
                 obs['agents'] = agents
             else:
@@ -93,10 +99,11 @@ class GridMemoryWrapper(gymnasium.ObservationWrapper):
 
         size = self.obs_radius * 2 + 1
         self.observation_space: gymnasium.spaces.Dict = gymnasium.spaces.Dict(
-            obstacles=gymnasium.spaces.Box(0.0, 1.0, shape=(size, size)),
-            agents=gymnasium.spaces.Box(0.0, 1.0, shape=(size, size)),
+            obstacles=gymnasium.spaces.Box(-1.0, 1.0, shape=(size, size)),
+            agents=gymnasium.spaces.Box(-1.0, 1.0, shape=(size, size)),
             xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
             target_xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
+            direction = gymnasium.spaces.Box(low=-1, high=1, shape=(2,), dtype=int),
         )
 
         self.mgm = MultipleGridMemory()

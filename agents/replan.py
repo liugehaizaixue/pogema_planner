@@ -4,7 +4,9 @@ except ImportError:
     from typing_extensions import Literal
 
 from pydantic import Extra
-
+from learning.grid_memory import MultipleGridMemory
+from learning.epom_config import Environment
+from copy import deepcopy
 from agents.utils_agents import AlgoBase, run_algorithm
 from planning.replan_algo import RePlanBase, FixLoopsWrapper, NoPathSoRandomOrStayWrapper, FixNonesWrapper
 
@@ -37,8 +39,13 @@ class RePlan:
         else:
             self.algo_name = 'A-star'
         self.env = None
+        self.mgm = MultipleGridMemory()
 
     def act(self, observations, rewards=None, dones=None, info=None, skip_agents=None):
+        test_observations = deepcopy(observations)
+        self.mgm.update(test_observations)
+        gm_radius = 7
+        self.mgm.modify_observation(test_observations, obs_radius=gm_radius)
         return self.agent.act(observations, skip_agents)
 
     def after_step(self, dones):

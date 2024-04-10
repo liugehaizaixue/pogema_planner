@@ -63,7 +63,7 @@ class EPOM:
         checkpoints = join(path, f'checkpoint_p{policy_id}')
         checkpoints = LearnerWorker.get_checkpoints(checkpoints)
         checkpoint_dict = LearnerWorker.load_checkpoint(checkpoints, device)
-        actor_critic.load_state_dict(checkpoint_dict['model'])
+        # actor_critic.load_state_dict(checkpoint_dict['model'])
 
         self.ppo = actor_critic
         self.device = device

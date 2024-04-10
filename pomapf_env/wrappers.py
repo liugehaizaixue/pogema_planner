@@ -84,7 +84,7 @@ class MatrixObservationWrapper(ObservationWrapper):
         # full_size = self.config.obs_radius * 2 + 1
         full_size = self.env.observation_space['obstacles'].shape[0]
         self.observation_space = gymnasium.spaces.Dict(
-            obs=gymnasium.spaces.Box(0.0, 1.0, shape=(3, full_size, full_size)),
+            obs=gymnasium.spaces.Box(-1.0, 1.0, shape=(3, full_size, full_size)),
             xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
             target_xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
         )
