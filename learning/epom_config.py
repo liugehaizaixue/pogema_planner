@@ -32,6 +32,7 @@ class AsyncPPO(BaseModel, extra=Extra.forbid):
     ppo_epochs: int = 1
     num_minibatches_to_accumulate: int = -1
     max_grad_norm: float = 4.0
+    optimizer: Literal["adam", "lamb"] = 'adam'
 
     exploration_loss_coeff: float = 0.003
     value_loss_coeff: float = 0.5
@@ -111,7 +112,7 @@ class ExperimentSettings(BaseModel, extra=Extra.forbid):
     adaptive_stddev: bool = True
     initial_stddev: float = 1.0
 
-    lr_schedule: str = 'kl_adaptive_minibatch'
+    lr_schedule: str = 'kl_adaptive_minibatch' #constant ? 
     lr_schedule_kl_threshold: float = None
 
 

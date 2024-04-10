@@ -9,11 +9,10 @@ from pomapf_env.env import make_pomapf
 from pomapf_env.wrappers import MatrixObservationWrapper
 
 
-def create_pogema_env(cfg=None):
-    environment_config: Environment = Environment(**cfg.full_config['environment'])
-    env = make_pomapf(grid_config=environment_config.grid_config)
-    gm_radius = environment_config.grid_memory_obs_radius
-    env = GridMemoryWrapper(env, obs_radius=gm_radius if gm_radius else environment_config.grid_config.obs_radius)
+def create_pogema_env(cfg: Environment=None):
+    env = make_pomapf(grid_config=cfg.grid_config)
+    gm_radius = cfg.grid_memory_obs_radius
+    env = GridMemoryWrapper(env, obs_radius=gm_radius if gm_radius else cfg.grid_config.obs_radius)
     env = MatrixObservationWrapper(env)
     return env
 
@@ -100,14 +99,3 @@ def register_pogema_envs(env_name):
 
 def register_custom_components(env_name):
     register_pogema_envs(env_name)
-
-
-def validate_config(config):
-    exp = Experiment(**config)
-    flat_config = Namespace(**exp.async_ppo.dict(),
-                            **exp.experiment_settings.dict(),
-                            **exp.global_settings.dict(),
-                            **exp.evaluation.dict(),
-                            full_config=exp.dict()
-                            )
-    return exp, flat_config

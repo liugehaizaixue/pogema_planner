@@ -12,7 +12,7 @@ class ResnetEncoder(EncoderBase):
     def __init__(self, cfg, obs_space, timing):
         super().__init__(cfg, timing)
         # noinspection Pydantic
-        settings: ExperimentSettings = ExperimentSettings(**cfg.full_config['experiment_settings'])
+        settings: ExperimentSettings = ExperimentSettings(**cfg.experiment_settings)
 
         obs_shape = get_obs_shape(obs_space)
         input_ch = obs_shape.obs[0]
