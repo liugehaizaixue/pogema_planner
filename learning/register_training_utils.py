@@ -1,4 +1,4 @@
-from encoder import ResnetEncoder
+from learning.encoder import ResnetEncoder
 
 from sample_factory.algo.utils.context import global_model_factory
 from sample_factory.utils.typing import ObsSpace
