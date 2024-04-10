@@ -29,7 +29,7 @@ from argparse import Namespace
 from learning.grid_memory import MultipleGridMemory
 from pomapf_env.wrappers import MatrixObservationWrapper
 
-from learning.register_env import validate_config, register_custom_components
+from learning.register_env import register_custom_components
 from learning.register_training_utils import register_custom_model
 
 
