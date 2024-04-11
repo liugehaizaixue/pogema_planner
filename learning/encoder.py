@@ -9,8 +9,8 @@ from learning.epom_config import ExperimentSettings
 
 
 class ResnetEncoder(Encoder):
-    def __init__(self, cfg, obs_space, timing):
-        super().__init__(cfg, timing)
+    def __init__(self, cfg, obs_space):
+        super().__init__(cfg)
         # noinspection Pydantic
         settings: ExperimentSettings = ExperimentSettings(**cfg.experiment_settings)
         input_ch = obs_space['obs'].shape[0]
@@ -27,7 +27,7 @@ class ResnetEncoder(Encoder):
             ])
 
             for j in range(res_blocks):
-                layers.append(ResBlock(cfg, out_channels, out_channels, self.timing))
+                layers.append(ResBlock(cfg, out_channels, out_channels))
 
             curr_input_channels = out_channels
 
