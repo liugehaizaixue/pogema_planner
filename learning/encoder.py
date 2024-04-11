@@ -1,21 +1,19 @@
 import torch
-from sample_factory.algorithms.appo.model_utils import get_obs_shape, EncoderBase, ResBlock, nonlinearity, \
-    register_custom_encoder
-from sample_factory.algorithms.utils.pytorch_utils import calc_num_elements
+from sample_factory.model.encoder import Encoder, ResBlock
+from sample_factory.model.model_utils import  nonlinearity
+from sample_factory.algo.utils.torch_utils import calc_num_elements
 from sample_factory.utils.utils import log
 from torch import nn as nn
 
 from learning.epom_config import ExperimentSettings
 
 
-class ResnetEncoder(EncoderBase):
+class ResnetEncoder(Encoder):
     def __init__(self, cfg, obs_space, timing):
         super().__init__(cfg, timing)
         # noinspection Pydantic
         settings: ExperimentSettings = ExperimentSettings(**cfg.experiment_settings)
-
-        obs_shape = get_obs_shape(obs_space)
-        input_ch = obs_shape.obs[0]
+        input_ch = obs_space['obs'].shape[0]
         log.debug('Num input channels: %d', input_ch)
 
         resnet_conf = [[settings.pogema_encoder_num_filters, settings.pogema_encoder_num_res_blocks]]
@@ -63,5 +61,3 @@ class ResnetEncoder(EncoderBase):
         x = self.forward_fc_blocks(x)
         return x
 
-
-register_custom_encoder('pogema_residual', ResnetEncoder)
