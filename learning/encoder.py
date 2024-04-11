@@ -44,7 +44,7 @@ class ResnetEncoder(Encoder):
             nn.ReLU(),
         )
 
-        self.init_fc_blocks(self.conv_head_out_size + settings.hidden_size)
+        self.encoder_out_size = self.conv_head_out_size
 
     def forward(self, x):
 
