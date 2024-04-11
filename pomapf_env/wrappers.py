@@ -28,8 +28,8 @@ class RewardShaping(gymnasium.Wrapper):
 
         return observations, rewards, dones, truncated, infos
 
-    def reset(self):
-        observation = self.env.reset()
+    def reset(self,seed=None, **kwargs):
+        observation = self.env.reset(seed=seed, **kwargs)
         self._previous_xy = [[0, 0] for _ in range(self.get_num_agents())]
 
         return observation
@@ -65,16 +65,12 @@ class MultiMapWrapper(gymnasium.Wrapper):
                         info[agent_idx]['episode_extra_stats'][f'{key}-{cfg.map_name.split("-")[0]}'] = value
         return observations, rewards, done, truncated, info
 
-    def reset(self, **kwargs):
+    def reset(self,seed=None, **kwargs):
         if self._configs is not None and len(self._configs) >= 1:
             cfg = deepcopy(self._configs[self._rnd.integers(0, len(self._configs))])
             self.env.unwrapped.grid_config = cfg
-        # 删除kwargs字典中的某个键值对
-        if 'seed' in kwargs:
-            kwargs.pop('seed')
-        if 'options' in kwargs:
-            kwargs.pop('options')
-        return self.env.reset(**kwargs)
+        obs , infos  = self.env.reset(seed=seed, **kwargs)
+        return obs , infos
 
 
 class MatrixObservationWrapper(ObservationWrapper):
