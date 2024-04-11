@@ -20,11 +20,11 @@ class AlgoBase(BaseModel):
 def run_algorithm(algo, map_name='sc1-AcrosstheCape', max_episode_steps=512, seed=None, num_agents=64, animate=False):
     gc = POMAPFConfig(map_name=map_name, max_episode_steps=max_episode_steps, seed=seed, num_agents=num_agents)
 
-    env = make_pomapf(grid_config=gc, with_animations=True)
+    env = make_pomapf(grid_config=gc)
     algo_name = type(algo).__name__
     if animate:
         anim_dir = str(pathlib.Path('renders') / algo_name)
-        env = AnimationMonitor(env, AnimationConfig(directory=anim_dir))
+        env = AnimationMonitor(env, AnimationConfig(egocentric_idx=0 , directory=anim_dir))
     obs, infos = env.reset()
     algo.after_reset()
     results_holder = ResultsHolder()
