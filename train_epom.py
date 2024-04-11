@@ -61,10 +61,10 @@ def run(config=None):
 
     log.info(flat_config)
 
-    if exp.train_for_env_steps == 1_000_000:
-        exp.use_wandb = False
+    if exp.experiment_settings.train_for_env_steps == 1_000_000:
+        exp.global_settings.use_wandb = False
 
-    if exp.use_wandb:
+    if exp.global_settings.use_wandb:
         import os
         if params.wandb_thread_mode:
             os.environ["WANDB_START_METHOD"] = "thread"
