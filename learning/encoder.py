@@ -38,13 +38,13 @@ class ResnetEncoder(Encoder):
         log.debug('Convolutional layer output size: %r', self.conv_head_out_size)
 
         self.coordinates_mlp = nn.Sequential(
-            nn.Linear(4, cfg.experiment_settings.hidden_size),
+            nn.Linear(4, settings.hidden_size),
             nn.ReLU(),
-            nn.Linear(cfg.experiment_settings.hidden_size, cfg.experiment_settings.hidden_size),
+            nn.Linear(settings.hidden_size, settings.hidden_size),
             nn.ReLU(),
         )
 
-        self.init_fc_blocks(self.conv_head_out_size + cfg.hidden_size)
+        self.init_fc_blocks(self.conv_head_out_size + settings.hidden_size)
 
     def forward(self, x):
 
