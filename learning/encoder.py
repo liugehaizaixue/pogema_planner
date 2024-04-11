@@ -46,6 +46,9 @@ class ResnetEncoder(Encoder):
 
         self.encoder_out_size = self.conv_head_out_size
 
+    def get_out_size(self) -> int:
+        return self.encoder_out_size
+
     def forward(self, x):
 
         coordinates_x = torch.cat([x['xy'], x['target_xy']], -1)
