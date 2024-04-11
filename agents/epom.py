@@ -53,7 +53,7 @@ class EPOM:
             self.exp = Experiment(**flat_config)
             flat_config = Namespace(**flat_config)
 
-        env_name = self.exp.environment.env
+        env_name = self.exp.environment.name
         register_custom_components(env_name)
         config = flat_config
         config.num_envs = 1

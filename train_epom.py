@@ -16,7 +16,7 @@ from learning.register_training_utils import register_custom_model, register_msg
 
 
 def create_sf_config(exp: Experiment):
-    custom_argv = [f'--env={exp.env}']
+    custom_argv = [f'--env={exp.name}']
     parser, partial_cfg = parse_sf_args(argv=custom_argv, evaluation=False)
     parser.set_defaults(**exp.dict())
     final_cfg = parse_full_cfg(parser, argv=custom_argv)
@@ -55,7 +55,7 @@ def run(config=None):
 
     exp = Experiment(**config)
     flat_config = Namespace(**exp.dict())
-    env_name = exp.environment.env
+    env_name = exp.environment.name
     log.debug(f'env_name = {env_name}')
     register_custom_components(env_name)
 
@@ -69,7 +69,7 @@ def run(config=None):
         if params.wandb_thread_mode:
             os.environ["WANDB_START_METHOD"] = "thread"
         wandb.init(project='Pogema-Planner', config=exp.dict(), save_code=False, sync_tensorboard=True,
-                   anonymous="allow", job_type=exp.environment.env, group='train')
+                   anonymous="allow", job_type=exp.environment.name, group='train')
 
     flat_config, runner = make_runner(create_sf_config(exp))
     register_msg_handlers(flat_config, runner)
