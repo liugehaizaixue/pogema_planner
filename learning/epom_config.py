@@ -125,7 +125,7 @@ class GlobalSettings(BaseModel, extra=Extra.forbid):
     device: str = 'gpu'
     seed: int = None
     cli_args: dict = {}
-    use_wandb: bool = True
+    use_wandb: bool = False
     with_wandb: Literal[False] = False
 
 
