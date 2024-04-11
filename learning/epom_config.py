@@ -99,11 +99,6 @@ class ExperimentSettings(BaseModel, extra=Extra.forbid):
     encoder_subtype: str = 'resnet_impala'
     encoder_extra_fc_layers: int = 1
 
-    pogema_encoder_num_filters: int = 64
-    pogema_encoder_num_res_blocks: int = 3
-
-    hidden_size: int = 512
-    nonlinearity: str = 'relu'
     policy_initialization: str = 'orthogonal'
     policy_init_gain: float = 1.0
     actor_critic_share_weights: bool = True
@@ -155,12 +150,28 @@ class Environment(BaseModel, ):
     use_maps: bool = True
     every_step_metrics: bool = False
 
+class EncoderConfig(BaseModel):
+    """
+    Configuration for an encoder.
+    Args:
+        extra_fc_layers (int): Number of extra fully connected (fc) layers. Default is 1.
+        num_filters (int): Number of filters. Default is 64.
+        num_res_blocks (int): Number of residual blocks. Default is 1.
+        nonlinearity (Literal['elu', 'relu', 'tanh']): Activation function to use. Default is 'relu'.
+        hidden_size (int): Hidden size for extra fc layers. Default is 128.
+    """
+    extra_fc_layers: int = 1
+    num_filters: int = 64
+    num_res_blocks: int = 3
+    nonlinearity: Literal['elu', 'relu', 'tanh'] = 'relu'
+    hidden_size: int = 512
 
 class Experiment(BaseModel):
     name: str = None
     environment: Environment = Environment()
     async_ppo: AsyncPPO = AsyncPPO()
     experiment_settings: ExperimentSettings = ExperimentSettings()
+    encoder_config: EncoderConfig = EncoderConfig()
     global_settings: GlobalSettings = GlobalSettings()
     evaluation: Evaluation = Evaluation()
 

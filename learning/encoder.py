@@ -5,36 +5,20 @@ from sample_factory.algo.utils.torch_utils import calc_num_elements
 from sample_factory.utils.utils import log
 from torch import nn as nn
 
-from learning.epom_config import ExperimentSettings
+from learning.epom_config import EncoderConfig
 
-def activation_func(activation_func) -> nn.Module:
-    """
-    Returns an instance of nn.Module representing the activation function specified in the configuration.
 
-    Returns:
-        nn.Module: Instance of nn.Module representing the activation function.
 
-    Raises:
-        Exception: If the activation function specified in the configuration is unknown.
-    """
-    if activation_func == "ELU":
-        return nn.ELU(inplace=True)
-    elif activation_func == "ReLU":
-        return nn.ReLU(inplace=True)
-    elif activation_func == "Mish":
-        return nn.Mish(inplace=True)
-    else:
-        raise Exception("Unknown activation_func")
-    
+
 class ResnetEncoder(Encoder):
     def __init__(self, cfg, obs_space):
         super().__init__(cfg)
         # noinspection Pydantic
-        settings: ExperimentSettings = ExperimentSettings(**cfg.experiment_settings)
+        self.encoder_cfg: EncoderConfig = EncoderConfig(**cfg.encoder_config)
         input_ch = obs_space['obs'].shape[0]
         log.debug('Num input channels: %d', input_ch)
 
-        resnet_conf = [[settings.pogema_encoder_num_filters, settings.pogema_encoder_num_res_blocks]]
+        resnet_conf = [[self.encoder_cfg.num_filters, self.encoder_cfg.num_res_blocks]]
 
         curr_input_channels = input_ch
         layers = []
@@ -49,20 +33,27 @@ class ResnetEncoder(Encoder):
 
             curr_input_channels = out_channels
 
-        layers.append(nonlinearity(cfg))
+        layers.append(nonlinearity(cfg, inplace = True))
 
         self.conv_head = nn.Sequential(*layers)
         self.conv_head_out_size = calc_num_elements(self.conv_head, obs_space['obs'].shape)
         log.debug('Convolutional layer output size: %r', self.conv_head_out_size)
 
         self.coordinates_mlp = nn.Sequential(
-            nn.Linear(4, settings.hidden_size),
+            nn.Linear(4, self.encoder_cfg.hidden_size),
             nn.ReLU(),
-            nn.Linear(settings.hidden_size, settings.hidden_size),
+            nn.Linear(self.encoder_cfg.hidden_size, self.encoder_cfg.hidden_size),
             nn.ReLU(),
         )
 
-        self.encoder_out_size = self.conv_head_out_size
+        self.encoder_out_size = self.conv_head_out_size + self.encoder_cfg.hidden_size
+
+        if self.encoder_cfg.extra_fc_layers:
+            self.extra_linear = nn.Sequential(
+                nn.Linear(self.encoder_out_size, self.encoder_cfg.hidden_size),
+                nonlinearity(self.encoder_cfg, inplace=True),
+            )
+            self.encoder_out_size = self.encoder_cfg.hidden_size
 
     def get_out_size(self) -> int:
         return self.encoder_out_size
@@ -79,5 +70,8 @@ class ResnetEncoder(Encoder):
         x = self.conv_head(x)
         x = x.contiguous().view(-1, self.conv_head_out_size)
         x = torch.cat([x, coordinates_x], -1)
+
+        if self.encoder_cfg.extra_fc_layers:
+            x = self.extra_linear(x)
         return x
 
