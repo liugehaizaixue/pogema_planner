@@ -116,4 +116,4 @@ class GridMemoryWrapper(gymnasium.ObservationWrapper):
     def reset(self,seed=None, **kwargs):
         self.mgm.clear()
         obs , infos = self.env.reset(seed=None, **kwargs)
-        return self.observation(obs)
+        return self.observation(obs) , infos
