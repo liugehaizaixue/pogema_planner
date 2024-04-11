@@ -29,10 +29,10 @@ class RewardShaping(gymnasium.Wrapper):
         return observations, rewards, dones, truncated, infos
 
     def reset(self,seed=None, **kwargs):
-        observation = self.env.reset(seed=seed, **kwargs)
+        observation , infos = self.env.reset(seed=seed, **kwargs)
         self._previous_xy = [[0, 0] for _ in range(self.get_num_agents())]
 
-        return observation
+        return observation, infos
 
 
 class MultiMapWrapper(gymnasium.Wrapper):
