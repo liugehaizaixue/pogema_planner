@@ -7,7 +7,25 @@ from torch import nn as nn
 
 from learning.epom_config import ExperimentSettings
 
+def activation_func(activation_func) -> nn.Module:
+    """
+    Returns an instance of nn.Module representing the activation function specified in the configuration.
 
+    Returns:
+        nn.Module: Instance of nn.Module representing the activation function.
+
+    Raises:
+        Exception: If the activation function specified in the configuration is unknown.
+    """
+    if activation_func == "ELU":
+        return nn.ELU(inplace=True)
+    elif activation_func == "ReLU":
+        return nn.ReLU(inplace=True)
+    elif activation_func == "Mish":
+        return nn.Mish(inplace=True)
+    else:
+        raise Exception("Unknown activation_func")
+    
 class ResnetEncoder(Encoder):
     def __init__(self, cfg, obs_space):
         super().__init__(cfg)
@@ -61,6 +79,5 @@ class ResnetEncoder(Encoder):
         x = self.conv_head(x)
         x = x.contiguous().view(-1, self.conv_head_out_size)
         x = torch.cat([x, coordinates_x], -1)
-        x = self.forward_fc_blocks(x)
         return x
 
