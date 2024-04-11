@@ -34,7 +34,7 @@ class ResnetEncoder(Encoder):
         layers.append(nonlinearity(cfg))
 
         self.conv_head = nn.Sequential(*layers)
-        self.conv_head_out_size = calc_num_elements(self.conv_head, obs_shape.obs)
+        self.conv_head_out_size = calc_num_elements(self.conv_head, obs_space['obs'].shape)
         log.debug('Convolutional layer output size: %r', self.conv_head_out_size)
 
         self.coordinates_mlp = nn.Sequential(
