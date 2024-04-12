@@ -71,14 +71,10 @@ class EPOM:
         actor_critic.model_to_device(device)
         
         name_prefix = dict(latest="checkpoint", best="best")['latest']
-        policy_index = 0 if 'policy_index' not in flat_config else flat_config.policy_index
-        checkpoints = Learner.get_checkpoints(os.path.join(self.path, f"checkpoint_p{policy_index}"),
-                                              f"{name_prefix}_*")
-        if self.algo_cfg.custom_path_to_weights:
-            checkpoints = [self.algo_cfg.custom_path_to_weights]
-
+        # policy_index = 0 if 'policy_index' not in flat_config else flat_config.policy_index
+        checkpoints = Learner.get_checkpoints(self.path, f"{name_prefix}_*")
         checkpoint_dict = Learner.load_checkpoint(checkpoints, device)
-        # actor_critic.load_state_dict(checkpoint_dict['model'])
+        actor_critic.load_state_dict(checkpoint_dict['model'])
 
         self.ppo = actor_critic
         self.device = device
