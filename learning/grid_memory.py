@@ -19,7 +19,8 @@ class GridMemory:
             target_slice[mask] = source[mask]
             # target[x - r:x + r + 1, y - r:y + r + 1] = source
             return True
-        except ValueError:
+        except (ValueError, IndexError) as e:
+            print(f"An error occurred: {e}")
             return False
 
     def increase_memory(self):
