@@ -16,7 +16,7 @@ from learning.register_training_utils import register_custom_model, register_msg
 
 
 def create_sf_config(exp: Experiment):
-    custom_argv = [f'--env={exp.name}']
+    custom_argv = [f'--env={exp.env}']
     parser, partial_cfg = parse_sf_args(argv=custom_argv, evaluation=False)
     parser.set_defaults(**exp.dict())
     final_cfg = parse_full_cfg(parser, argv=custom_argv)
