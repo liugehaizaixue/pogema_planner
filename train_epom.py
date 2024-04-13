@@ -55,21 +55,21 @@ def run(config=None):
 
     exp = Experiment(**config)
     flat_config = Namespace(**exp.dict())
-    env_name = exp.environment.name
+    env_name = exp.environment.env
     log.debug(f'env_name = {env_name}')
     register_custom_components(env_name)
 
     log.info(flat_config)
 
-    if exp.experiment_settings.train_for_env_steps == 1_000_000:
-        exp.global_settings.use_wandb = False
+    if exp.train_for_env_steps == 1_000_000:
+        exp.use_wandb = False
 
-    if exp.global_settings.use_wandb:
+    if exp.use_wandb:
         import os
         if params.wandb_thread_mode:
             os.environ["WANDB_START_METHOD"] = "thread"
         wandb.init(project='Pogema-Planner', config=exp.dict(), save_code=False, sync_tensorboard=True,
-                   anonymous="allow", job_type=exp.environment.name, group='train')
+                   anonymous="allow", job_type=exp.environment.env, group='train')
 
     flat_config, runner = make_runner(create_sf_config(exp))
     register_msg_handlers(flat_config, runner)
