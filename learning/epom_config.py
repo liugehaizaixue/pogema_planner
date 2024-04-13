@@ -44,7 +44,7 @@ class EncoderConfig(BaseModel):
 
 class Experiment(BaseModel):
     environment: Environment = Environment()
-    encoder: EncoderConfig = EncoderConfig()
+    encoder_config: EncoderConfig = EncoderConfig()
 
     env: Literal['POMAPF-v0'] = "POMAPF-v0"
 
@@ -112,7 +112,7 @@ class Experiment(BaseModel):
     pbt_target_objective: str = 'true_reward' #?
 
     # =============================
-    num_workers: int = multiprocessing.cpu_count() # 4
+    num_workers: int = 4 # multiprocessing.cpu_count() # 4
     num_envs_per_worker: int = 4
     worker_num_splits: int = 1
     policy_initialization: str = 'orthogonal'
