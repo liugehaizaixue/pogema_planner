@@ -119,7 +119,7 @@ class Experiment(BaseModel):
     # =============================
 
     lr_schedule: str = 'kl_adaptive_minibatch'
-    lr_schedule_kl_threshold: float = None
+    lr_schedule_kl_threshold: float = 0.008
 
     experiment: str = 'exp'
     train_dir: str = 'experiments/train_dir'
