@@ -51,7 +51,7 @@ class Experiment(BaseModel):
     force_envs_single_thread: bool = True
     restart_behavior: str = "resume"  # ["resume", "restart", "overwrite"]
     normalize_returns: bool = False
-    async_rl: bool = False
+    async_rl: bool = True
     num_batches_per_epoch: int = 16
 
     num_batches_to_accumulate: int = 1
@@ -79,7 +79,7 @@ class Experiment(BaseModel):
     recurrence: int = 32
 
     use_rnn: bool = True
-    rnn_size: int = 256
+    rnn_size: int = 512
     rnn_type: str = 'gru'
     rnn_num_layers: int = 1
 
@@ -90,7 +90,7 @@ class Experiment(BaseModel):
     num_batches_per_epoch: int = 1
     num_epochs: int = 1
 
-    max_grad_norm: float = 4.0
+    max_grad_norm: float = 5.0
     optimizer: Literal["adam", "lamb"] = 'adam'
 
     exploration_loss_coeff: float = 0.01
@@ -101,30 +101,30 @@ class Experiment(BaseModel):
     max_policy_lag: int = 100
     # ============================
     with_pbt: bool = True
-    pbt_optimize_gamma: bool = True
+    pbt_optimize_gamma: bool = False
     pbt_mix_policies_in_one_env: bool = True
-    pbt_period_env_steps: int = 5e6
+    pbt_period_env_steps: int = 3e6
     pbt_start_mutation: int = 2e7
     pbt_replace_fraction: float = 0.3
     pbt_mutation_rate: float = 0.15
-    pbt_replace_reward_gap: float = 0.1
+    pbt_replace_reward_gap: float = 0.05
     pbt_replace_reward_gap_absolute: float = 1e-6
     pbt_target_objective: str = 'true_reward' #?
 
     # =============================
-    num_workers: int = 4 # multiprocessing.cpu_count() # 4
-    num_envs_per_worker: int = 4
-    worker_num_splits: int = 1
+    num_workers: int = 12 # multiprocessing.cpu_count() # 4
+    num_envs_per_worker: int = 2
+    worker_num_splits: int = 2
     policy_initialization: str = 'orthogonal'
     # =============================
 
-    lr_schedule: str = 'kl_adaptive_minibatch'
-    lr_schedule_kl_threshold: float = 0.008
+    # lr_schedule: str = 'kl_adaptive_minibatch'
+    # lr_schedule_kl_threshold: float = 0.008
 
     experiment: str = 'exp'
     train_dir: str = 'experiments/train_dir'
     seed: Optional[int] = 42
-    use_wandb: bool = True
+    use_wandb: bool = False
 
 
     save_every_sec: int = 120
