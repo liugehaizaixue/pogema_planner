@@ -8,9 +8,9 @@ class CustomCoreTransformer(ModelCore):
         super().__init__(cfg)
 
         self.cfg = cfg
-        self.core_output_size = cfg.rnn_size
+        self.core_output_size = input_size
 
-        encoder_layer = nn.TransformerEncoderLayer(d_model=cfg.rnn_size, nhead= 8, batch_first=True)
+        encoder_layer = nn.TransformerEncoderLayer(d_model=input_size, nhead= 8, batch_first=True)
         self.core = nn.TransformerEncoder(encoder_layer, num_layers=6)
 
 
