@@ -57,7 +57,7 @@ class Experiment(BaseModel):
     num_batches_to_accumulate: int = 1
     normalize_input: bool = False
     decoder_mlp_layers = []
-    save_best_metric: str = "avg_throughput"
+    save_best_metric: str = "CSR" # ["ISR", "CSR", "ep_length"]
     value_bootstrap: bool = True
     save_milestones_sec: int = -1
 
