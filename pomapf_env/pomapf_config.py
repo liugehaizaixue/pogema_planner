@@ -12,7 +12,7 @@ class POMAPFConfig(GridConfig):
     observation_type: Literal['POMAPF', 'MAPF'] = 'POMAPF'
     on_target: Literal['finish'] = 'finish'
     auto_reset: Literal[False] = False
-    num_agents: int = 8
+    num_agents: int = 64
     obs_radius: int = 5
-    max_episode_steps: int = 1024
+    max_episode_steps: int = 512
     map_name: str = '(wc3-[A-P]|sc1-[A-S]|sc1-TaleofTwoCities|street-[A-P]|mazes-s[0-9]_|mazes-s[1-3][0-9]_|random-s[0-9]_|random-s[1-3][0-9]_)'

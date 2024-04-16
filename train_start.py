@@ -2,7 +2,9 @@ from sys import argv
 
 from learning.epom_config import Experiment
 from train_epom import run, create_sf_config
+import os
 
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 def recursive_update(experiment: dict, key, value):
     if key in experiment:
