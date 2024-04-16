@@ -49,4 +49,4 @@ def make_custom_core(cfg: Config, input_size: int) -> ModelCore:
 
 def register_custom_model():
     global_model_factory().register_encoder_factory(make_custom_encoder)
-    global_model_factory().register_core_factory(make_custom_core)
+    global_model_factory().register_model_core_factory(make_custom_core)
