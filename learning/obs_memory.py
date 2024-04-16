@@ -7,9 +7,10 @@ from pogema.grid import Grid
 class ObsMemory:
     def __init__(self, memory_duration = 10):
         self.memory_duration = memory_duration
+        self.memory = None
 
     def update(self, observation):
-        if self.memory is None or len(self.memories) != self.memory_duration:
+        if self.memory is None or len(self.memory) != self.memory_duration:
             self.memory = [np.zeros_like(observation) for _ in range(len(observation))]
 
         self.memory.append(observation)
@@ -32,7 +33,7 @@ class MultipleObsMemory:
 
 
     def get_observations_with_memory(self, observations):
-        return [self.memories[agent_idx].get_observation() for agent_idx in len(observations)] 
+        return [self.memories[agent_idx].get_observation() for agent_idx, obs in enumerate(observations)] 
 
     def clear(self):
         self.memories = None
