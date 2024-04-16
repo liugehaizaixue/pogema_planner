@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 from learning.epom_config import CoreConfig
-from sample_factory.model.model_utils import ModelCore
+from sample_factory.model.core import ModelCore
 
 class CustomCoreTransformer(ModelCore):
     def __init__(self, cfg, input_size: int):

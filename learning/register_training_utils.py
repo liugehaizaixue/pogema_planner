@@ -4,7 +4,7 @@ from learning.core import CustomCoreTransformer
 from sample_factory.algo.utils.context import global_model_factory
 from sample_factory.utils.typing import ObsSpace
 from sample_factory.model.encoder import Encoder
-from sample_factory.model.model_utils import ModelCore
+from sample_factory.model.core import ModelCore
 from tensorboardX import SummaryWriter
 from sample_factory.utils.typing import Config, PolicyID
 from sample_factory.algo.runners.runner import AlgoObserver, Runner
