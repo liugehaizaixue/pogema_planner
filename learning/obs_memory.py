@@ -11,7 +11,7 @@ class ObsMemory:
 
     def update(self, observation):
         if self.memory is None or len(self.memory) != self.memory_duration:
-            self.memory = [np.zeros_like(observation) for _ in range(len(observation))]
+            self.memory = [observation for _ in range(self.memory_duration)] # 如果记忆为空，则前几帧认为与当前帧相同，还是应该为空？
 
         self.memory.append(observation)
         self.memory.pop(0)
