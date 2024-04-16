@@ -65,8 +65,8 @@ class Experiment(BaseModel):
     stats_avg: int = 100
     
     # ============================
-    train_for_env_steps: int = 1e10
-    train_for_seconds: int = 1e10
+    train_for_env_steps: int = 1e9
+    train_for_seconds: int = 1e9
 
     # ============================
     learning_rate: float = 1e-4
