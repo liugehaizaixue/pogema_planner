@@ -45,22 +45,24 @@ class ObsMemoryWrapper(gymnasium.ObservationWrapper):
         self.obs_radius = obs_radius
 
         size = self.obs_radius * 2 + 1
-        self.observation_space: gymnasium.spaces.Dict = gymnasium.spaces.Dict(        # 定义输出的形状？
-            obstacles=gymnasium.spaces.Box(-1.0, 1.0, shape=(size, size)),
-            agents=gymnasium.spaces.Box(-1.0, 1.0, shape=(size, size)),
-            xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
-            target_xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
-            direction = gymnasium.spaces.Box(low=-1, high=1, shape=(2,), dtype=int),
+        self.observation_space: gymnasium.spaces.Sequence = gymnasium.spaces.Sequence( # 定义输出的形状？
+            gymnasium.spaces.Dict(        
+                obstacles=gymnasium.spaces.Box(-1.0, 1.0, shape=(size, size)),
+                agents=gymnasium.spaces.Box(-1.0, 1.0, shape=(size, size)),
+                xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
+                target_xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
+                direction = gymnasium.spaces.Box(low=-1, high=1, shape=(2,), dtype=int),
+            )
         )
 
-        self.mgm = MultipleObsMemory()
+        self.mobsm = MultipleObsMemory()
 
     def observation(self, observations):
-        self.mgm.update(observations)
-        self.mgm.modify_observation(observations, self.obs_radius)
-        return observations
+        self.mobsm.update(observations)
+        observations_with_memory = self.mobsm.get_observations_with_memory(observations)
+        return observations_with_memory
 
     def reset(self,seed=None, **kwargs):
-        self.mgm.clear()
+        self.mobsm.clear()
         obs , infos = self.env.reset(seed=None, **kwargs)
         return self.observation(obs) , infos
