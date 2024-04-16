@@ -1,17 +1,17 @@
 import torch
 from torch import nn
-
+from learning.epom_config import CoreConfig
 from sample_factory.model.model_utils import ModelCore
 
 class CustomCoreTransformer(ModelCore):
-    def __init__(self, cfg, input_size):
+    def __init__(self, cfg, input_size: int):
         super().__init__(cfg)
 
-        self.cfg = cfg
+        self.core_cfg: CoreConfig = CoreConfig(**cfg.core_config)
         self.core_output_size = input_size
 
-        encoder_layer = nn.TransformerEncoderLayer(d_model=input_size, nhead= 8, batch_first=True)
-        self.core = nn.TransformerEncoder(encoder_layer, num_layers=6)
+        encoder_layer = nn.TransformerEncoderLayer(d_model=input_size, nhead= self.core_cfg.nhead, batch_first=True)
+        self.core = nn.TransformerEncoder(encoder_layer, num_layers=self.core_cfg.num_layers)
 
 
     def forward(self, head_output, fake_rnn_states):

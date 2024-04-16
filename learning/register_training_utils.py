@@ -1,8 +1,10 @@
 from learning.encoder import ResnetEncoder
+from learning.core import CustomCoreTransformer
 
 from sample_factory.algo.utils.context import global_model_factory
 from sample_factory.utils.typing import ObsSpace
 from sample_factory.model.encoder import Encoder
+from sample_factory.model.model_utils import ModelCore
 from tensorboardX import SummaryWriter
 from sample_factory.utils.typing import Config, PolicyID
 from sample_factory.algo.runners.runner import AlgoObserver, Runner
@@ -41,6 +43,10 @@ def make_custom_encoder(cfg: Config, obs_space: ObsSpace) -> Encoder:
     """Factory function as required by the API."""
     return ResnetEncoder(cfg, obs_space)
 
+def make_custom_core(cfg: Config, input_size: int) -> ModelCore:
+    """Factory function as required by the API."""
+    return CustomCoreTransformer(cfg, input_size)
 
 def register_custom_model():
     global_model_factory().register_encoder_factory(make_custom_encoder)
+    global_model_factory().register_core_factory(make_custom_core)

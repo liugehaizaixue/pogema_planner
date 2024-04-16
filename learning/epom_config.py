@@ -26,6 +26,11 @@ class Environment(BaseModel, ):
     use_maps: bool = True
     every_step_metrics: bool = False
 
+
+class CoreConfig(BaseModel):
+    nhead: int = 8
+    num_layers: int = 6
+
 class EncoderConfig(BaseModel):
     """
     Configuration for an encoder.
@@ -45,6 +50,7 @@ class EncoderConfig(BaseModel):
 class Experiment(BaseModel):
     environment: Environment = Environment()
     encoder_config: EncoderConfig = EncoderConfig()
+    core_config: CoreConfig = CoreConfig()
 
     env: Literal['POMAPF-v0'] = "POMAPF-v0"
 
