@@ -130,7 +130,7 @@ class Experiment(BaseModel):
     experiment: str = 'exp'
     train_dir: str = 'experiments/train_dir'
     seed: Optional[int] = 42
-    use_wandb: bool = False
+    use_wandb: bool = True
 
 
     save_every_sec: int = 120
