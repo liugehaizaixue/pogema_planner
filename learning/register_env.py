@@ -5,7 +5,7 @@ from argparse import Namespace
 import gymnasium
 from learning.epom_config import Environment, Experiment
 from learning.grid_memory import GridMemoryWrapper
-from learning.obs_memory import ObsMemoryWrapper
+# from learning.obs_memory import ObsMemoryWrapper
 from pomapf_env.env import make_pomapf
 from pomapf_env.wrappers import MatrixObservationWrapper
 
@@ -15,7 +15,7 @@ def create_pogema_env(cfg: Environment=None):
     gm_radius = cfg.grid_memory_obs_radius
     env = GridMemoryWrapper(env, obs_radius=gm_radius if gm_radius else cfg.grid_config.obs_radius)
     env = MatrixObservationWrapper(env)
-    env = ObsMemoryWrapper(env, obs_radius=gm_radius if gm_radius else cfg.grid_config.obs_radius)
+    # env = ObsMemoryWrapper(env, obs_radius=gm_radius if gm_radius else cfg.grid_config.obs_radius)
     return env
 
 

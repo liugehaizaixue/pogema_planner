@@ -41,15 +41,15 @@ class RePlan:
             self.algo_name = 'A-star'
         self.env = None
         self.mgm = MultipleGridMemory()
-        self.mobsm = MultipleObsMemory()
+        # self.mobsm = MultipleObsMemory()
 
     def act(self, observations, rewards=None, dones=None, info=None, skip_agents=None):
         test_observations = deepcopy(observations)
         self.mgm.update(test_observations)
         gm_radius = 7
         self.mgm.modify_observation(test_observations, obs_radius=gm_radius)
-        self.mobsm.update(test_observations)
-        observations_with_memory = self.mobsm.get_observations_with_memory(test_observations)
+        # self.mobsm.update(test_observations)
+        # observations_with_memory = self.mobsm.get_observations_with_memory(test_observations)
         return self.agent.act(observations, skip_agents)
 
     def after_step(self, dones):
