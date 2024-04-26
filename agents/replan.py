@@ -48,8 +48,6 @@ class RePlan:
         self.mgm.update(test_observations)
         gm_radius = 7
         self.mgm.modify_observation(test_observations, obs_radius=gm_radius)
-        # self.mobsm.update(test_observations)
-        # observations_with_memory = self.mobsm.get_observations_with_memory(test_observations)
         return self.agent.act(observations, skip_agents)
 
     def after_step(self, dones):

@@ -108,11 +108,9 @@ class EPOM:
         gm_radius = env_cfg.grid_memory_obs_radius
         self.mgm.modify_observation(observations, obs_radius=gm_radius if gm_radius else env_cfg.grid_config.obs_radius)
         observations = MatrixObservationWrapper.to_matrix(observations)
-        # self.mobsm.update(observations)
-        # observations_with_memory = self.mobsm.get_observations_with_memory(observations)
 
         with torch.no_grad():
-            obs_torch = AttrDict(self.transform_dict_observations(observations_with_memory))
+            obs_torch = AttrDict(self.transform_dict_observations(observations))
             normalized_obs = prepare_and_normalize_obs(self.ppo, obs_torch)
             policy_outputs = self.ppo(normalized_obs, self.rnn_states)
             self.rnn_states = policy_outputs['new_rnn_states']
