@@ -14,11 +14,11 @@ def get_test_maps():
             test_maps.append(map_name)
     return test_maps
 
-def write_into_file(x, current_time):
+def write_into_file(x, algo_name , current_time):
     path = './eval_result/'
     if not os.path.exists(path):
         os.mkdir(path)
-    file_name = "eval_result/"+ current_time
+    file_name = "eval_result/"+ algo_name+"_"+current_time
     with open(file_name,"w") as f:
         f.write(str(x))
         f.close()
