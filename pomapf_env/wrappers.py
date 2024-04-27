@@ -13,7 +13,7 @@ from pomapf_env.custom_maps import MAPS_REGISTRY
 class RewardShaping(gymnasium.Wrapper):
     def __init__(self, env):
         super().__init__(env)
-        self._previous_xy = None
+        self._previous_loc = None
 
     def step(self, action):
         observations, rewards, dones, truncated, infos = self.env.step(action)
@@ -21,16 +21,16 @@ class RewardShaping(gymnasium.Wrapper):
             reward = rewards[agent_idx]
             reward -= 0.0001
             if action[agent_idx] != 0:
-                if tuple(self._previous_xy[agent_idx]) == tuple(observations[agent_idx]['xy']):
+                if tuple(self._previous_loc[agent_idx]) == (*observations[agent_idx]['xy'] , observations[agent_idx]['direction']):
                     reward -= 0.0002
             rewards[agent_idx] = reward
-            self._previous_xy[agent_idx] = observations[agent_idx]['xy']
+            self._previous_loc[agent_idx] = [*observations[agent_idx]['xy'] , observations[agent_idx]['direction']] 
 
         return observations, rewards, dones, truncated, infos
 
     def reset(self,seed=None, **kwargs):
         observation , infos = self.env.reset(seed=seed, **kwargs)
-        self._previous_xy = [[0, 0] for _ in range(self.get_num_agents())]
+        self._previous_loc = [[0, 0, obs['direction'] ] for obs in observation]
 
         return observation, infos
 
