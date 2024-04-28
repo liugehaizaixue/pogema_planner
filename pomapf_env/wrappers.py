@@ -84,12 +84,14 @@ class MatrixObservationWrapper(ObservationWrapper):
                 obs=gymnasium.spaces.Box(0.0, 1.0, shape=(3, full_size, full_size)),
                 xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
                 target_xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
+                direction=Box(low=-1, high=1, shape=(2,), dtype=int),
             )
         elif memory_type == "plus":
             self.observation_space = gymnasium.spaces.Dict(
                 obs=gymnasium.spaces.Box(-1.0, 1.0, shape=(3, full_size, full_size)),
                 xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
                 target_xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
+                direction=Box(low=-1, high=1, shape=(2,), dtype=int),
             )
         else:
             pass   
@@ -119,6 +121,7 @@ class MatrixObservationWrapper(ObservationWrapper):
                                                                                    obs_radius)[None]]).astype(float32),
                  "xy": np.array(obs['xy'], dtype=float32),
                  "target_xy": np.array(obs['target_xy'], dtype=float32),
+                 "direction": np.array(obs['direction'], dtype=float32),
                  })
         return result
 
