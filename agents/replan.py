@@ -40,7 +40,7 @@ class RePlan:
         else:
             self.algo_name = 'A-star'
         self.env = None
-        self.mgm = MultipleGridMemory()
+        self.mgm = MultipleGridMemory(memory_type="default")
         # self.mobsm = MultipleObsMemory()
 
     def act(self, observations, rewards=None, dones=None, info=None, skip_agents=None):

@@ -6,9 +6,14 @@ from pogema.grid import Grid
 
 
 class GridMemory:
-    def __init__(self, start_r=32):
-        # self.memory = np.zeros(shape=(start_r * 2 + 1, start_r * 2 + 1))  # memory.shape[0] 起始就是32
-        self.memory = np.full(shape=(start_r * 2 + 1, start_r * 2 + 1), fill_value=-1)
+    def __init__(self, start_r=32 , memory_type="default"):
+        self.memory_type = memory_type
+        if memory_type == "default":
+            self.memory = np.zeros(shape=(start_r * 2 + 1, start_r * 2 + 1))  # memory.shape[0] 起始就是32
+        elif memory_type == "plus":
+            self.memory = np.full(shape=(start_r * 2 + 1, start_r * 2 + 1), fill_value=-1)
+        else:
+            pass
 
     @staticmethod
     def try_to_insert(x, y, source, target):
@@ -27,8 +32,13 @@ class GridMemory:
         """ memory矩阵 扩充一倍 """
         m = self.memory
         r = self.memory.shape[0]
-        # self.memory = np.zeros(shape=(r * 2 + 1, r * 2 + 1))
-        self.memory = np.full(shape=(r * 2 + 1, r * 2 + 1), fill_value=-1)
+        if self.memory_type == "default":
+            self.memory = np.zeros(shape=(r * 2 + 1, r * 2 + 1))
+        elif self.memory_type == "plus":
+            self.memory = np.full(shape=(r * 2 + 1, r * 2 + 1), fill_value=-1)
+        else:
+            pass
+
         assert self.try_to_insert(r, r, m, self.memory)
 
     def update(self, x, y, obstacles):
@@ -60,12 +70,13 @@ class GridMemory:
 
 
 class MultipleGridMemory:
-    def __init__(self):
+    def __init__(self, memory_type="default"):
         self.memories = None
+        self.memory_type = memory_type
 
     def update(self, observations): #更改memory中的obstacles
         if self.memories is None or len(self.memories) != len(observations):
-            self.memories = [GridMemory() for _ in range(len(observations))]
+            self.memories = [GridMemory(memory_type=self.memory_type) for _ in range(len(observations))]
         for agent_idx, obs in enumerate(observations):
             self.memories[agent_idx].update(*obs['xy'], obs['obstacles'])
 
@@ -80,34 +91,60 @@ class MultipleGridMemory:
         r = obs_radius # env_cfg.grid_memory_obs_radius = 7
         rr = observations[0]['agents'].shape[0] // 2 # env_cfg.grid_config.obs_radius = 5
         for agent_idx, obs in enumerate(observations):  # 修改agent矩阵大小，但agent没有记忆中的位置
-
-            if rr <= r:
-                # agents = np.zeros(shape=(r * 2 + 1, r * 2 + 1))
-                agents = np.full(shape = (r * 2 + 1, r * 2 + 1), fill_value=-1)  # 创建-1矩阵 ，原本不可见区域全为0，而现在存在不可见区域设为-1
-                agents[r - rr:r + rr + 1, r - rr: r + rr + 1] = obs['agents']
-                obs['agents'] = agents
+            if self.memory_type == "default":
+                if rr <= r:
+                    agents = np.zeros(shape=(r * 2 + 1, r * 2 + 1)) #不可见区域全为0
+                    mask = (obs['agents'] >= 0)  # 创建一个布尔掩码，表示obs['agents']中的元素是否为0或1
+                    agents_slice = agents[r - rr:r + rr + 1, r - rr: r + rr + 1]
+                    agents_slice[mask] = obs['agents'][mask]
+                    obs['agents'] = agents
+                else:
+                    obs['agents'] = obs['agents'][rr - r:rr + r + 1, rr - r: rr + r + 1]
+                    agents = np.zeros_like(obs['agents'])
+                    mask = (obs['agents'] >= 0)
+                    agents[mask] = obs['agents'][mask]
+                    obs['agents'] = agents
+            elif self.memory_type == "plus":
+                if rr <= r:
+                    agents = np.full(shape = (r * 2 + 1, r * 2 + 1), fill_value=-1)  # 创建-1矩阵 ，原本不可见区域全为0，而现在存在不可见区域设为-1
+                    agents[r - rr:r + rr + 1, r - rr: r + rr + 1] = obs['agents']
+                    obs['agents'] = agents
+                else:
+                    obs['agents'] = obs['agents'][rr - r:rr + r + 1, rr - r: rr + r + 1]
             else:
-                obs['agents'] = obs['agents'][rr - r:rr + r + 1, rr - r: rr + r + 1]
+                pass
+
 
     def clear(self):
         self.memories = None
 
 
 class GridMemoryWrapper(gymnasium.ObservationWrapper):
-    def __init__(self, env, obs_radius):
+    def __init__(self, env, obs_radius, memory_type="default"):
         super().__init__(env)
         self.obs_radius = obs_radius
-
         size = self.obs_radius * 2 + 1
-        self.observation_space: gymnasium.spaces.Dict = gymnasium.spaces.Dict(
-            obstacles=gymnasium.spaces.Box(-1.0, 1.0, shape=(size, size)),
-            agents=gymnasium.spaces.Box(-1.0, 1.0, shape=(size, size)),
-            xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
-            target_xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
-            direction = gymnasium.spaces.Box(low=-1, high=1, shape=(2,), dtype=int),
-        )
 
-        self.mgm = MultipleGridMemory()
+        if memory_type == "default":
+            self.observation_space: gymnasium.spaces.Dict = gymnasium.spaces.Dict(
+                obstacles=gymnasium.spaces.Box(0.0, 1.0, shape=(size, size)),
+                agents=gymnasium.spaces.Box(0.0, 1.0, shape=(size, size)),
+                xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
+                target_xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
+                direction = gymnasium.spaces.Box(low=-1, high=1, shape=(2,), dtype=int),
+            )
+        elif memory_type == "plus":
+            self.observation_space: gymnasium.spaces.Dict = gymnasium.spaces.Dict(
+                obstacles=gymnasium.spaces.Box(-1.0, 1.0, shape=(size, size)),
+                agents=gymnasium.spaces.Box(-1.0, 1.0, shape=(size, size)),
+                xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
+                target_xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
+                direction = gymnasium.spaces.Box(low=-1, high=1, shape=(2,), dtype=int),
+            )
+        else:
+            pass
+
+        self.mgm = MultipleGridMemory(memory_type=memory_type)
 
     def observation(self, observations):
         self.mgm.update(observations)

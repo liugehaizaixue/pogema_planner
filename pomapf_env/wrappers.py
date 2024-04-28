@@ -75,15 +75,24 @@ class MultiMapWrapper(gymnasium.Wrapper):
 
 class MatrixObservationWrapper(ObservationWrapper):
 
-    def __init__(self, env):
+    def __init__(self, env, memory_type="default"):
         super().__init__(env)
         # full_size = self.config.obs_radius * 2 + 1
         full_size = self.env.observation_space['obstacles'].shape[0]
-        self.observation_space = gymnasium.spaces.Dict(
-            obs=gymnasium.spaces.Box(-1.0, 1.0, shape=(3, full_size, full_size)),
-            xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
-            target_xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
-        )
+        if memory_type == "default":
+            self.observation_space = gymnasium.spaces.Dict(
+                obs=gymnasium.spaces.Box(0.0, 1.0, shape=(3, full_size, full_size)),
+                xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
+                target_xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
+            )
+        elif memory_type == "plus":
+            self.observation_space = gymnasium.spaces.Dict(
+                obs=gymnasium.spaces.Box(-1.0, 1.0, shape=(3, full_size, full_size)),
+                xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
+                target_xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
+            )
+        else:
+            pass   
 
     @staticmethod
     def get_square_target(x, y, tx, ty, obs_radius):

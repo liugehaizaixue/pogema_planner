@@ -13,9 +13,9 @@ from pomapf_env.wrappers import MatrixObservationWrapper
 def create_pogema_env(cfg: Environment=None):
     env = make_pomapf(grid_config=cfg.grid_config)
     gm_radius = cfg.grid_memory_obs_radius
-    env = GridMemoryWrapper(env, obs_radius=gm_radius if gm_radius else cfg.grid_config.obs_radius)
-    env = MatrixObservationWrapper(env)
-    # env = ObsMemoryWrapper(env, obs_radius=gm_radius if gm_radius else cfg.grid_config.obs_radius)
+    memory_type = cfg.memory_type
+    env = GridMemoryWrapper(env, obs_radius=gm_radius if gm_radius else cfg.grid_config.obs_radius , memory_type=memory_type)
+    env = MatrixObservationWrapper(env, memory_type=memory_type)
     return env
 
 

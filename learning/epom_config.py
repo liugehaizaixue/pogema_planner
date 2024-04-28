@@ -17,6 +17,7 @@ class Environment(BaseModel, ):
     grid_config: POMAPFConfig = POMAPFConfig(observation_type="POMAPF")
     env: str = "POMAPF-v0"
     grid_memory_obs_radius: Optional[int] = 7 #None
+    memory_type: Literal['default', 'plus', 'max'] = 'plus'
     with_animation: bool = False
     worker_index: int = None
     vector_index: int = None

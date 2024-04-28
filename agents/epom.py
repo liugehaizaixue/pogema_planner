@@ -82,7 +82,8 @@ class EPOM:
         self.cfg = config
 
         self.rnn_states = None
-        self.mgm = MultipleGridMemory()
+        self.env_cfg: Environment = Environment(**self.cfg.environment)
+        self.mgm = MultipleGridMemory(memory_type=self.env_cfg.memory_type)
         # self.mobsm = MultipleObsMemory()
         self._step = 0
 
@@ -103,10 +104,9 @@ class EPOM:
         self.rnn_states = torch.zeros([len(observations), get_rnn_size(self.cfg)], dtype=torch.float32,
                                       device=self.device) if self.rnn_states is None else self.rnn_states
         
-        env_cfg: Environment = Environment(**self.cfg.environment)
         self.mgm.update(observations)
-        gm_radius = env_cfg.grid_memory_obs_radius
-        self.mgm.modify_observation(observations, obs_radius=gm_radius if gm_radius else env_cfg.grid_config.obs_radius)
+        gm_radius = self.env_cfg.grid_memory_obs_radius
+        self.mgm.modify_observation(observations, obs_radius=gm_radius if gm_radius else self.env_cfg.grid_config.obs_radius)
         observations = MatrixObservationWrapper.to_matrix(observations)
 
         with torch.no_grad():
