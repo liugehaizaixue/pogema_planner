@@ -47,6 +47,7 @@ class EncoderConfig(BaseModel):
     num_res_blocks: int = 8
     nonlinearity: Literal['elu', 'relu', 'tanh'] = 'relu'
     hidden_size: int = 512
+    with_direction = False
 
 class Experiment(BaseModel):
     environment: Environment = Environment()

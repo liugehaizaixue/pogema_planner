@@ -39,8 +39,12 @@ class ResnetEncoder(Encoder):
         self.conv_head_out_size = calc_num_elements(self.conv_head, obs_space['obs'].shape)
         log.debug('Convolutional layer output size: %r', self.conv_head_out_size)
 
+        if self.encoder_cfg.with_direction:
+            coordinates_input_size = 6
+        else:
+            coordinates_input_size = 4
         self.coordinates_mlp = nn.Sequential(
-            nn.Linear(6, self.encoder_cfg.hidden_size),
+            nn.Linear(coordinates_input_size, self.encoder_cfg.hidden_size),
             nn.ReLU(),
             nn.Linear(self.encoder_cfg.hidden_size, self.encoder_cfg.hidden_size),
             nn.ReLU(),
@@ -59,8 +63,10 @@ class ResnetEncoder(Encoder):
         return self.encoder_out_size
 
     def forward(self, x):
-
-        coordinates_x = torch.cat([x['xy'], x['target_xy'], x['direction']], -1)
+        if self.encoder_cfg.with_direction:
+            coordinates_x = torch.cat([x['xy'], x['target_xy'], x['direction']], -1)
+        else:
+            coordinates_x = torch.cat([x['xy'], x['target_xy']], -1)
         coordinates_scale = 64.0
         abs_coordinates = torch.max(torch.abs(coordinates_x), torch.tensor(coordinates_scale)) # abs绝对值
         coordinates_x /= abs_coordinates
