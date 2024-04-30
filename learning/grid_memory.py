@@ -110,7 +110,8 @@ class MultipleGridMemory:
             self.memories = [GridMemory(memory_type=self.memory_type) for _ in range(len(observations))]
         for agent_idx, obs in enumerate(observations):
             self.memories[agent_idx].update_obstacles(*obs['xy'], obs['obstacles'])
-            self.memories[agent_idx].update_agents(*obs['xy'], obs['agents'])
+            if self.memory_type == "max":
+                self.memories[agent_idx].update_agents(*obs['xy'], obs['agents'])
 
     def get_obstacles_observations(self, xy_list, obs_radius):
         return [self.memories[idx].get_obstacles_observation(x, y, obs_radius) for idx, (x, y) in enumerate(xy_list)]  # 从记忆中获取obs
