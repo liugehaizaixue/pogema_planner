@@ -31,6 +31,7 @@ class Environment(BaseModel, ):
 class CoreConfig(BaseModel):
     nhead: int = 8
     num_layers: int = 6
+    memory_length: int = 8
 
 class EncoderConfig(BaseModel):
     """

@@ -1,17 +1,17 @@
 import os
 from prettytable import PrettyTable
 
-from agents.epom import example_epom
-# from agents.replan import example_replan
+# from agents.epom import example_epom
+from agents.replan import example_replan
 
 
-def example(map_name='sc1-AcrosstheCape', num_agents=128, seed=0, animate=True):
+def example(map_name='sc1-AcrosstheCape', num_agents=4, seed=0, animate=True):
     os.environ['OMP_NUM_THREADS'] = "1"
     os.environ['MKL_NUM_THREADS'] = "1"
 
     run_examples_funcs = [
-        example_epom,
-        # example_replan,
+        # example_epom,
+        example_replan,
     ]
 
     score_table = PrettyTable()
