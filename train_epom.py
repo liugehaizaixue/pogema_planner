@@ -24,7 +24,6 @@ def create_sf_config(exp: Experiment):
 
 
 def run(config=None):
-    register_custom_model()
 
     if config is None:
         import argparse
@@ -55,6 +54,8 @@ def run(config=None):
 
     exp = Experiment(**config)
     flat_config = Namespace(**exp.dict())
+    model_type = exp.environment.model_type
+    register_custom_model(model_type)
     env_name = exp.environment.env
     log.debug(f'env_name = {env_name}')
     register_custom_components(env_name)

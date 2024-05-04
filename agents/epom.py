@@ -42,7 +42,6 @@ class EpomConfig(AlgoBase, extra=Extra.forbid):
 class EPOM:
     def __init__(self, algo_cfg):
         self.algo_cfg: EpomConfig = algo_cfg
-        register_custom_model()
         path = algo_cfg.path_to_weights
         device = algo_cfg.device
 
@@ -54,6 +53,8 @@ class EPOM:
             self.exp = Experiment(**flat_config)
             flat_config = Namespace(**flat_config)
 
+        model_type = self.exp.environment.model_type
+        register_custom_model(model_type)
         env_name = self.exp.environment.env
         register_custom_components(env_name)
         config = flat_config
@@ -84,7 +85,7 @@ class EPOM:
         self.rnn_states = None
         self.env_cfg: Environment = Environment(**self.cfg.environment)
         self.mgm = MultipleGridMemory(memory_type=self.env_cfg.memory_type)
-        # self.mobsm = MultipleObsMemory()
+        self.mobsm = MultipleObsMemory(memory_length=8)
         self._step = 0
 
     def after_reset(self):
@@ -108,6 +109,8 @@ class EPOM:
         gm_radius = self.env_cfg.grid_memory_obs_radius
         self.mgm.modify_observation(observations, obs_radius=gm_radius if gm_radius else self.env_cfg.grid_config.obs_radius)
         observations = MatrixObservationWrapper.to_matrix(observations)
+        self.mobsm.update(observations)
+        observations = self.mobsm.get_observations_with_memory(observations)
 
         with torch.no_grad():
             obs_torch = AttrDict(self.transform_dict_observations(observations))

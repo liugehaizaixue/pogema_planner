@@ -3,6 +3,7 @@ from torch import nn
 from learning.epom_config import CoreConfig
 from sample_factory.model.core import ModelCore
 from typing import Tuple
+import torch.nn.functional as F
 
 class CustomCore(ModelCore):
     def __init__(self, cfg, input_size: int):
@@ -25,5 +26,7 @@ class CustomCore(ModelCore):
 
         head_output = head_output.view(-1, self.memory_length, self.input_size)
         x = self.core(head_output)
+        # pooling
+        pooled_tensor = F.adaptive_max_pool1d(x.permute(0, 2, 1), output_size=1).squeeze(dim=-1)
 
         return x, fake_rnn_states

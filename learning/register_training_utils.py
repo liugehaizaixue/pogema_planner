@@ -1,5 +1,6 @@
 from learning.encoder import ResnetEncoder
-# from learning.core import CustomCoreTransformer
+from custom_model.custom_core import CustomCore
+from custom_model.custom_encoder import CustomEncoder
 
 from sample_factory.algo.utils.context import global_model_factory
 from sample_factory.utils.typing import ObsSpace
@@ -39,14 +40,21 @@ def register_msg_handlers(cfg: Config, runner: Runner):
     runner.register_observer(CustomExtraSummariesObserver())
 
 
-def make_custom_encoder(cfg: Config, obs_space: ObsSpace) -> Encoder:
+def make_custom_rnn_encoder(cfg: Config, obs_space: ObsSpace) -> Encoder:
     """Factory function as required by the API."""
     return ResnetEncoder(cfg, obs_space)
 
-def make_custom_core(cfg: Config, input_size: int) -> ModelCore:
+def make_custom_transformer_encoder(cfg: Config, obs_space: ObsSpace) -> Encoder:
     """Factory function as required by the API."""
-    return CustomCoreTransformer(cfg, input_size)
+    return CustomEncoder(cfg, obs_space)
 
-def register_custom_model():
-    global_model_factory().register_encoder_factory(make_custom_encoder)
-    # global_model_factory().register_model_core_factory(make_custom_core)
+def make_custom_transformer_core(cfg: Config, input_size: int) -> ModelCore:
+    """Factory function as required by the API."""
+    return CustomCore(cfg, input_size)
+
+def register_custom_model(model_type="rnn"):
+    if model_type == "rnn":
+        global_model_factory().register_encoder_factory(make_custom_rnn_encoder)
+    else:
+        global_model_factory().register_encoder_factory(make_custom_transformer_encoder)
+        global_model_factory().register_model_core_factory(make_custom_transformer_core)
