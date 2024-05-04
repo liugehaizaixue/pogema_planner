@@ -27,12 +27,11 @@ class Environment(BaseModel, ):
     use_maps: bool = True
     every_step_metrics: bool = False
     model_type: Literal['rnn', 'transformer'] = 'rnn'
-
+    memory_length: int = 8
 
 class CoreConfig(BaseModel):
     nhead: int = 8
     num_layers: int = 6
-    memory_length: int = 8
 
 class EncoderConfig(BaseModel):
     """

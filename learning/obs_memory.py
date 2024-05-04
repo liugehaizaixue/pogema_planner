@@ -54,10 +54,11 @@ class MultipleObsMemory:
 
 
 class ObsMemoryWrapper(gymnasium.ObservationWrapper):
-    def __init__(self, env, obs_radius, k):
+    def __init__(self, env, obs_radius, memory_length):
         super().__init__(env)
         self.obs_radius = obs_radius
-        self.memory_length = k
+        self.memory_length = memory_length
+        k = memory_length
         size = self.obs_radius * 2 + 1
         self.observation_space = gymnasium.spaces.Dict(
                 obs=gymnasium.spaces.Box(-1.0, 1.0, shape=(k, 3, size, size)),

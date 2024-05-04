@@ -85,7 +85,7 @@ class EPOM:
         self.rnn_states = None
         self.env_cfg: Environment = Environment(**self.cfg.environment)
         self.mgm = MultipleGridMemory(memory_type=self.env_cfg.memory_type)
-        self.mobsm = MultipleObsMemory(memory_length=8)
+        self.mobsm = MultipleObsMemory(memory_length=self.env_cfg.memory_length)
         self._step = 0
 
     def after_reset(self):

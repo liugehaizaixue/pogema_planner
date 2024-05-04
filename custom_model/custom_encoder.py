@@ -36,7 +36,7 @@ class CustomEncoder(Encoder):
         layers.append(nonlinearity(cfg, inplace = True))
 
         self.conv_head = nn.Sequential(*layers)
-        self.conv_head_out_size = calc_num_elements(self.conv_head, obs_space['obs'].shape)
+        self.conv_head_out_size = calc_num_elements(self.conv_head, obs_space['obs'].shape[1:])
         log.debug('Convolutional layer output size: %r', self.conv_head_out_size)
 
         if self.encoder_cfg.with_direction:
