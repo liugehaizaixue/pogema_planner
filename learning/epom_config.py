@@ -61,7 +61,6 @@ class Experiment(BaseModel):
     restart_behavior: str = "resume"  # ["resume", "restart", "overwrite"]
     normalize_returns: bool = False
     async_rl: bool = True
-    num_batches_per_epoch: int = 16
 
     num_batches_to_accumulate: int = 1
     normalize_input: bool = False
