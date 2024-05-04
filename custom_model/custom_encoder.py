@@ -74,7 +74,7 @@ class CustomEncoder(Encoder):
 
         x = x['obs']
         batch_size, k, channels, height, width = x.size()
-        x = x.view(-1, channels, height, width)
+        x = x.contiguous().view(-1, channels, height, width)
         x = self.conv_head(x)
         x = x.contiguous().view(batch_size, k, -1)
         x = torch.cat([x, coordinates_x], -1)
@@ -82,6 +82,6 @@ class CustomEncoder(Encoder):
         if self.encoder_cfg.extra_fc_layers:
             x = self.extra_linear(x)
 
-        x = x.view(-1, self.encoder_out_size)
+        x = x.contiguous().view(-1, self.encoder_out_size)
         return x
 

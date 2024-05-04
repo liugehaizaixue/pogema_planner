@@ -26,7 +26,7 @@ class CustomCore(ModelCore):
         
     def forward(self, head_output, fake_rnn_states):
 
-        head_output = head_output.view(-1, self.memory_length, self.input_size)
+        head_output = head_output.contiguous().view(-1, self.memory_length, self.input_size)
         x = self.core(head_output)
 
         # pooling
