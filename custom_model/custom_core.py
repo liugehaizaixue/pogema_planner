@@ -28,10 +28,10 @@ class CustomCore(ModelCore):
 
         head_output = head_output.view(-1, self.memory_length, self.input_size)
         x = self.core(head_output)
-        
+
         # pooling
         # 定义权重参数
-        weights = torch.arange(1, self.memory_length+1, dtype=torch.float)  # 从1到5的递增序列
+        weights = torch.arange(1, self.memory_length+1, dtype=torch.float)  # 从1到self.memory_length的递增序列
         # 将权重参数转换为与输入张量的形状相匹配的张量
         weights = weights.unsqueeze(0).unsqueeze(-1)
         # 对权重参数进行归一化，确保权重之和为1
