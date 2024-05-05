@@ -6,7 +6,7 @@ from sample_factory.utils.utils import log
 from torch import nn as nn
 from typing import Tuple
 from learning.epom_config import EncoderConfig
-
+import torch.nn.functional as F
 
 class CustomEncoder(Encoder):
     def __init__(self, cfg, obs_space):
@@ -59,6 +59,9 @@ class CustomEncoder(Encoder):
             )
             self.encoder_out_size = self.encoder_cfg.hidden_size
 
+        transformer_encoder_layer = nn.TransformerEncoderLayer(d_model=self.encoder_out_size, nhead= self.encoder_cfg.nhead, batch_first=True)
+        self.transformer_encoder = nn.TransformerEncoder(transformer_encoder_layer, num_layers= self.encoder_cfg.num_layers)
+
     def get_out_size(self) -> int:
         return self.encoder_out_size
 
@@ -82,6 +85,8 @@ class CustomEncoder(Encoder):
         if self.encoder_cfg.extra_fc_layers:
             x = self.extra_linear(x)
 
-        x = x.contiguous().view(-1, self.encoder_out_size)
+        x = self.transformer_encoder(x)
+        x = F.adaptive_avg_pool1d(x.permute(0, 2, 1), output_size=1).squeeze(dim=-1)
+
         return x
 
