@@ -95,7 +95,7 @@ class MatrixObservationWrapper(ObservationWrapper):
             )
         elif memory_type == "max":
             self.observation_space = gymnasium.spaces.Dict(
-                obs=gymnasium.spaces.Box(-1.0, 1.0, shape=(3, full_size, full_size)),
+                obs=gymnasium.spaces.Box(-1.0, 4.0, shape=(3, full_size, full_size)),
                 xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
                 target_xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
                 direction=Box(low=-1, high=1, shape=(2,), dtype=int),
