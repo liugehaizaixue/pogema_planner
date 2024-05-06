@@ -60,7 +60,8 @@ class GridMemory:
         r = other_agents.shape[0] // 2
         other_agents[r, r] = 0 #先将观察中的 中心元素置为0，即不考虑自己 ，最后返回obs时再设为1
         self.agents_memory[self.agents_memory >= 4] = -1 #再将记忆中大于4的记忆丢弃
-        self.agents_memory[self.agents_memory >= 0] += 1 #并将过去所有智能体记忆+1
+        self.agents_memory[self.agents_memory == 0] = -1 #等于0的直接设为-1
+        self.agents_memory[self.agents_memory >= 1] += 1 #并将过去所有智能体记忆+1
         # 然后再插入新的观察        
         while True:
             r = self.agents_memory.shape[0] // 2
