@@ -1,7 +1,5 @@
-from learning.encoder import ResnetEncoder
-# from custom_model.custom_core import CustomCore
 from custom_model.custom_encoder import CustomEncoder
-
+# from custom_model.custom_core import CustomCore
 from sample_factory.algo.utils.context import global_model_factory
 from sample_factory.utils.typing import ObsSpace
 from sample_factory.model.encoder import Encoder
@@ -13,6 +11,7 @@ from sample_factory.algo.runners.runner import AlgoObserver, Runner
 import numpy as np
 
 from sample_factory.utils.utils import log
+from learning.encoder import ResnetEncoder
 
 
 def pogema_extra_episodic_stats_processing(*args, **kwargs):

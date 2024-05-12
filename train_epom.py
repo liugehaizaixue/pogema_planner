@@ -1,19 +1,22 @@
+import faulthandler
+faulthandler.enable()
+
 import json
 from argparse import Namespace
-
+from sys import argv
 import yaml
-from sample_factory.cfg.arguments import parse_sf_args, parse_full_cfg
-
 from sample_factory.train import make_runner
 from sample_factory.algo.utils.misc import ExperimentStatus
 from sample_factory.utils.utils import log
-
+from sample_factory.cfg.arguments import parse_sf_args, parse_full_cfg
 import wandb
 
 from learning.epom_config import Experiment
 from learning.register_env import register_custom_components
 from learning.register_training_utils import register_custom_model, register_msg_handlers
 
+# import os
+# os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 def create_sf_config(exp: Experiment):
     custom_argv = [f'--env={exp.env}']
@@ -79,3 +82,48 @@ def run(config=None):
         status = runner.run()
 
     return status
+
+def recursive_update(experiment: dict, key, value):
+    if key in experiment:
+        experiment[key] = value
+        return True
+    else:
+        for k, v in experiment.items():
+            if isinstance(v, dict):
+                if recursive_update(v, key, value):
+                    return True
+        return False
+
+
+def update_dict(target_dict, keys, values):
+    for key, value in zip(keys, values):
+        if recursive_update(target_dict, key, value):
+            print(f'Updated {key} to {value}')
+        else:
+            raise KeyError(f'Could not find {key} in experiment')
+
+
+def parse_args_to_items(argv_):
+    keys = []
+    values = []
+
+    for arg in argv_[1:]:
+        key, value = arg.split('=')
+        key = key.replace('--', '')
+
+        keys.append(key)
+        values.append(value)
+
+    return keys, values
+
+def main():
+    experiment = Experiment()
+    experiment = create_sf_config(experiment).__dict__
+    keys, values = parse_args_to_items(list(argv))
+
+    # check all args and replace them in experiment recursively
+    update_dict(experiment, keys, values)
+    run(config=experiment)
+
+if __name__ == '__main__':
+    main()

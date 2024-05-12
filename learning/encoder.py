@@ -1,11 +1,10 @@
-import torch
-from sample_factory.model.encoder import Encoder, ResBlock
-from sample_factory.model.model_utils import  nonlinearity
-from sample_factory.algo.utils.torch_utils import calc_num_elements
-from sample_factory.utils.utils import log
-from torch import nn as nn
-
 from learning.epom_config import EncoderConfig
+from sample_factory.algo.utils.torch_utils import calc_num_elements
+from sample_factory.model.encoder import Encoder, ResBlock
+from sample_factory.model.model_utils import nonlinearity
+from sample_factory.utils.utils import log
+from torch import nn
+import torch
 
 
 

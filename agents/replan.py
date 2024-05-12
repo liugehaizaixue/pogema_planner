@@ -3,12 +3,11 @@ try:
 except ImportError:
     from typing_extensions import Literal
 
+from agents.utils_agents import AlgoBase, run_algorithm
 from pydantic import Extra
 from learning.grid_memory import MultipleGridMemory
 from learning.obs_memory import MultipleObsMemory
-from learning.epom_config import Environment
 from copy import deepcopy
-from agents.utils_agents import AlgoBase, run_algorithm
 from planning.replan_algo import RePlanBase, FixLoopsWrapper, NoPathSoRandomOrStayWrapper, FixNonesWrapper
 from pomapf_env.wrappers import MatrixObservationWrapper
 
@@ -49,8 +48,8 @@ class RePlan:
         gm_radius = 7
         self.mgm.modify_observation(test_observations, obs_radius=gm_radius)
         test_observations = MatrixObservationWrapper.to_matrix(test_observations)
-        self.mobsm.update(test_observations)
-        test_observations = self.mobsm.get_observations_with_memory(test_observations)
+        # self.mobsm.update(test_observations)
+        # test_observations = self.mobsm.get_observations_with_memory(test_observations)
         return self.agent.act(observations, skip_agents)
 
     def after_step(self, dones):

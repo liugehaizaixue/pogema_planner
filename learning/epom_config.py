@@ -1,4 +1,3 @@
-import multiprocessing
 from typing import Optional
 
 from pomapf_env.pomapf_config import POMAPFConfig
@@ -8,9 +7,8 @@ try:
 except ImportError:
     from typing_extensions import Literal
 
-from pydantic import Extra, BaseModel, validator
-import os
-from os.path import join
+from pydantic import BaseModel
+
 
 
 class Environment(BaseModel, ):
