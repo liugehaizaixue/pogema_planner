@@ -47,6 +47,7 @@ class EncoderConfig(BaseModel):
     nonlinearity: Literal['elu', 'relu', 'tanh'] = 'relu'
     hidden_size: int = 512
     with_direction = False
+    use_cbam = False
     nhead: int = 8
     num_layers: int = 6
 
