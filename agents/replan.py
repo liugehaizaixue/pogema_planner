@@ -7,6 +7,7 @@ from agents.utils_agents import AlgoBase, run_algorithm
 from pydantic import Extra
 from learning.grid_memory import MultipleGridMemory
 from learning.obs_memory import MultipleObsMemory
+from learning.instructive_path import MultiplePlanner
 from copy import deepcopy
 from planning.replan_algo import RePlanBase, FixLoopsWrapper, NoPathSoRandomOrStayWrapper, FixNonesWrapper
 from pomapf_env.wrappers import MatrixObservationWrapper
@@ -41,13 +42,16 @@ class RePlan:
         self.env = None
         self.mgm = MultipleGridMemory(memory_type="max")
         self.mobsm = MultipleObsMemory()
+        self.mp = MultiplePlanner(7)
 
     def act(self, observations, rewards=None, dones=None, info=None, skip_agents=None):
         test_observations = deepcopy(observations)
         self.mgm.update(test_observations)
         gm_radius = 7
         self.mgm.modify_observation(test_observations, obs_radius=gm_radius)
-        test_observations = MatrixObservationWrapper.to_matrix(test_observations)
+        # self.mp.update(test_observations)
+        # self.mp.modify_observation(test_observations)
+        # test_observations = MatrixObservationWrapper.to_matrix(test_observations)
         # self.mobsm.update(test_observations)
         # test_observations = self.mobsm.get_observations_with_memory(test_observations)
         return self.agent.act(observations, skip_agents)

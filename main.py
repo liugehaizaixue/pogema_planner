@@ -1,11 +1,11 @@
 import os
 from prettytable import PrettyTable
-
+import time
 # from agents.epom import example_epom
 from agents.replan import example_replan
 
 
-def example(map_name='sc1-AcrosstheCape', num_agents=4, seed=0, animate=True):
+def example(map_name='sc1-AcrosstheCape', num_agents=64, seed=0, animate=True):
     os.environ['OMP_NUM_THREADS'] = "1"
     os.environ['MKL_NUM_THREADS'] = "1"
 
@@ -29,4 +29,7 @@ def example(map_name='sc1-AcrosstheCape', num_agents=4, seed=0, animate=True):
 
 
 if __name__ == '__main__':
+    start_time = time.time()
     example()
+    end_time = time.time()
+    print("Time: ", end_time - start_time)
