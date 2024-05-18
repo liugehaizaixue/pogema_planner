@@ -1,9 +1,10 @@
 from learning.epom_config import EncoderConfig
 from sample_factory.algo.utils.torch_utils import calc_num_elements
-from sample_factory.model.encoder import Encoder, ResBlock
+from sample_factory.model.encoder import Encoder
 from sample_factory.model.model_utils import nonlinearity
 from sample_factory.utils.utils import log
 from learning.CBAM import CBAMBlock
+from learning.resblock import ResBlock
 from torch import nn
 import torch
 
@@ -30,9 +31,7 @@ class ResnetEncoder(Encoder):
             ])
 
             for j in range(res_blocks):
-                layers.append(ResBlock(cfg, out_channels, out_channels))
-                if self.use_cbam:
-                    layers.append(CBAMBlock(out_channels))
+                layers.append(ResBlock(cfg, out_channels, out_channels, self.use_cbam))
 
             curr_input_channels = out_channels
 
