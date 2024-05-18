@@ -170,20 +170,25 @@ class MultiplePlanner:
             self.planners[agent_idx].update_path(obs['xy'],obs["direction"], obs['target_xy'])
             path = self.planners[agent_idx].get_path(self.use_best_move)
             path_point = set([(x,y) for x , y ,z in path])
-            matrix = self.map_points_to_matrix(path_point)
+            center = (obs['xy'][0] , obs['xy'][1])
+            matrix = self.map_points_to_matrix(path_point, center)
             self.paths.append(matrix)
 
     def modify_observation(self, observations):
         for agent_idx, obs in enumerate(observations):
             obs['instructive_path'] = self.paths[agent_idx]
 
-    def map_points_to_matrix(self , point_list):
+    def map_points_to_matrix(self , point_list, center):
         matrix_size = self.obs_shape
+        center_x, center_y = center
         matrix = np.zeros(matrix_size)
         for point in point_list:
             x, y = point
-            if 0 <= x < matrix_size[0] and 0 <= y < matrix_size[1]:
-                matrix[x][y] = 1
+            # 进行坐标转换，相对于中心点的偏移量
+            x_shifted = (x - center_x) + matrix_size[0] // 2
+            y_shifted = (y - center_y) + matrix_size[1] // 2
+            if 0 <= x_shifted < matrix_size[0] and 0 <= y_shifted < matrix_size[1]:
+                matrix[x_shifted][y_shifted] = 1
         return matrix
 
     def clear(self):
