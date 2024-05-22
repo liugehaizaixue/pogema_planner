@@ -169,7 +169,10 @@ class MultiplePlanner:
             
             self.planners[agent_idx].update_path(obs['xy'],obs["direction"], obs['target_xy'])
             path = self.planners[agent_idx].get_path(self.use_best_move)
-            path_point = set([(x,y) for x , y ,z in path])
+            if path:
+                path_point = set([(x,y) for x , y ,z in path])
+            else:
+                path_point = []
             center = (obs['xy'][0] , obs['xy'][1])
             matrix = self.map_points_to_matrix(path_point, center)
             self.paths.append(matrix)
