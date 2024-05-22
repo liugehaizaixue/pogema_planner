@@ -6,6 +6,7 @@ import gymnasium
 from learning.epom_config import Environment, Experiment
 from learning.grid_memory import GridMemoryWrapper
 from learning.obs_memory import ObsMemoryWrapper
+from learning.instructive_path import InstructivePath
 from pomapf_env.env import make_pomapf
 from pomapf_env.wrappers import MatrixObservationWrapper
 
@@ -17,6 +18,8 @@ def create_pogema_env(cfg: Environment=None):
     memory_length = cfg.memory_length
     with_instructive_path = cfg.with_instructive_path
     env = GridMemoryWrapper(env, obs_radius=gm_radius if gm_radius else cfg.grid_config.obs_radius , memory_type=memory_type)
+    if with_instructive_path:
+        env = InstructivePath(env, obs_radius=gm_radius if gm_radius else cfg.grid_config.obs_radius)
     env = MatrixObservationWrapper(env, memory_type=memory_type, instructive_path=with_instructive_path)
     model_type = cfg.model_type
     if model_type == "transformer":
