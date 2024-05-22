@@ -212,7 +212,7 @@ class InstructivePath(gymnasium.ObservationWrapper):
 
     def observation(self, observations):
         self.mp.update(observations)
-        self.mp.modify_observation(observations, self.obs_radius)
+        self.mp.modify_observation(observations)
         return observations
 
     def reset(self,seed=None, **kwargs):
