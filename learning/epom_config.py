@@ -26,6 +26,7 @@ class Environment(BaseModel, ):
     every_step_metrics: bool = False
     model_type: Literal['rnn', 'transformer'] = 'rnn'
     memory_length: int = 8
+    with_instructive_path: bool = False
 
 class CoreConfig(BaseModel):
     nhead: int = 8

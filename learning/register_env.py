@@ -15,8 +15,9 @@ def create_pogema_env(cfg: Environment=None):
     gm_radius = cfg.grid_memory_obs_radius
     memory_type = cfg.memory_type
     memory_length = cfg.memory_length
+    with_instructive_path = cfg.with_instructive_path
     env = GridMemoryWrapper(env, obs_radius=gm_radius if gm_radius else cfg.grid_config.obs_radius , memory_type=memory_type)
-    env = MatrixObservationWrapper(env, memory_type=memory_type)
+    env = MatrixObservationWrapper(env, memory_type=memory_type, instructive_path=with_instructive_path)
     model_type = cfg.model_type
     if model_type == "transformer":
         env = ObsMemoryWrapper(env, obs_radius=gm_radius if gm_radius else cfg.grid_config.obs_radius, memory_length=memory_length)
