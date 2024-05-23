@@ -75,7 +75,7 @@ class MultiMapWrapper(gymnasium.Wrapper):
 
 class MatrixObservationWrapper(ObservationWrapper):
 
-    def __init__(self, env, memory_type="default", instructive_path=False):
+    def __init__(self, env, memory_type="default", instructive_path=False , display_directions=False):
         super().__init__(env)
         self.instructive_path = instructive_path
         if instructive_path:
@@ -83,17 +83,21 @@ class MatrixObservationWrapper(ObservationWrapper):
         else:
             obs_ch = 3
         # full_size = self.config.obs_radius * 2 + 1
+        if display_directions:
+            max_agents_value = 4.0
+        else:
+            max_agents_value = 1.0
         full_size = self.env.observation_space['obstacles'].shape[0]
         if memory_type == "default":
             self.observation_space = gymnasium.spaces.Dict(
-                obs=gymnasium.spaces.Box(0.0, 1.0, shape=(obs_ch, full_size, full_size)),
+                obs=gymnasium.spaces.Box(0.0, max_agents_value, shape=(obs_ch, full_size, full_size)),
                 xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
                 target_xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
                 direction=Box(low=-1, high=1, shape=(2,), dtype=int),
             )
         elif memory_type == "plus":
             self.observation_space = gymnasium.spaces.Dict(
-                obs=gymnasium.spaces.Box(-1.0, 1.0, shape=(obs_ch, full_size, full_size)),
+                obs=gymnasium.spaces.Box(-1.0, max_agents_value, shape=(obs_ch, full_size, full_size)),
                 xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
                 target_xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
                 direction=Box(low=-1, high=1, shape=(2,), dtype=int),

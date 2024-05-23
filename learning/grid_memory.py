@@ -162,15 +162,18 @@ class MultipleGridMemory:
 
 
 class GridMemoryWrapper(gymnasium.ObservationWrapper):
-    def __init__(self, env, obs_radius, memory_type="default"):
+    def __init__(self, env, obs_radius, memory_type="default", display_directions =False):
         super().__init__(env)
         self.obs_radius = obs_radius
         size = self.obs_radius * 2 + 1
-
+        if display_directions:
+            max_agents_value = 4.0
+        else:
+            max_agents_value = 1.0
         if memory_type == "default":
             self.observation_space: gymnasium.spaces.Dict = gymnasium.spaces.Dict(
                 obstacles=gymnasium.spaces.Box(0.0, 1.0, shape=(size, size)),
-                agents=gymnasium.spaces.Box(0.0, 1.0, shape=(size, size)),
+                agents=gymnasium.spaces.Box(0.0, max_agents_value, shape=(size, size)),
                 xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
                 target_xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
                 direction = gymnasium.spaces.Box(low=-1, high=1, shape=(2,), dtype=int),
@@ -178,7 +181,7 @@ class GridMemoryWrapper(gymnasium.ObservationWrapper):
         elif memory_type == "plus":
             self.observation_space: gymnasium.spaces.Dict = gymnasium.spaces.Dict(
                 obstacles=gymnasium.spaces.Box(-1.0, 1.0, shape=(size, size)),
-                agents=gymnasium.spaces.Box(-1.0, 1.0, shape=(size, size)),
+                agents=gymnasium.spaces.Box(-1.0, max_agents_value, shape=(size, size)),
                 xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
                 target_xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
                 direction = gymnasium.spaces.Box(low=-1, high=1, shape=(2,), dtype=int),

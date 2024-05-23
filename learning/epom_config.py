@@ -27,6 +27,7 @@ class Environment(BaseModel, ):
     model_type: Literal['rnn', 'transformer'] = 'rnn'
     memory_length: int = 8
     with_instructive_path: bool = False
+    display_directions=True
 
 class CoreConfig(BaseModel):
     nhead: int = 8

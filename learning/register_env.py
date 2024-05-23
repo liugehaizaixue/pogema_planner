@@ -17,13 +17,14 @@ def create_pogema_env(cfg: Environment=None):
     memory_type = cfg.memory_type
     memory_length = cfg.memory_length
     with_instructive_path = cfg.with_instructive_path
-    env = GridMemoryWrapper(env, obs_radius=gm_radius if gm_radius else cfg.grid_config.obs_radius , memory_type=memory_type)
+    display_directions = cfg.display_directions
+    env = GridMemoryWrapper(env, obs_radius=gm_radius if gm_radius else cfg.grid_config.obs_radius , memory_type=memory_type, display_directions=display_directions)
     if with_instructive_path:
         env = InstructivePath(env, obs_radius=gm_radius if gm_radius else cfg.grid_config.obs_radius)
-    env = MatrixObservationWrapper(env, memory_type=memory_type, instructive_path=with_instructive_path)
+    env = MatrixObservationWrapper(env, memory_type=memory_type, instructive_path=with_instructive_path , display_directions=display_directions)
     model_type = cfg.model_type
     if model_type == "transformer":
-        env = ObsMemoryWrapper(env, obs_radius=gm_radius if gm_radius else cfg.grid_config.obs_radius, memory_length=memory_length)
+        env = ObsMemoryWrapper(env, obs_radius=gm_radius if gm_radius else cfg.grid_config.obs_radius, memory_length=memory_length , display_directions=display_directions)
     return env
 
 
