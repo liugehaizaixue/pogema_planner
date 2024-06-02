@@ -27,7 +27,7 @@ class Environment(BaseModel, ):
     model_type: Literal['rnn', 'transformer'] = 'rnn'
     memory_length: int = 8
     with_instructive_path: bool = False
-    display_directions=True
+    display_directions=False
 
 class CoreConfig(BaseModel):
     nhead: int = 8
@@ -48,7 +48,7 @@ class EncoderConfig(BaseModel):
     num_res_blocks: int = 8
     nonlinearity: Literal['elu', 'relu', 'tanh'] = 'relu'
     hidden_size: int = 512
-    with_direction = False
+    with_direction = True
     use_cbam = False
     nhead: int = 8
     num_layers: int = 6

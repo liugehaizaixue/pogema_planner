@@ -24,6 +24,8 @@ from pomapf_env.pomapf_config import POMAPFConfig
 from pomapf_env.wrappers import MatrixObservationWrapper
 from pomapf_env.env import make_pomapf
 
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 class EstimatorSettings(BaseModel):
     algo: Union[RePlanConfig, EpomConfig] = RePlanConfig()
@@ -120,7 +122,7 @@ class PolicyEstimationWrapper(gym.Wrapper, ):
 def collect_samples(cfg: EstimatorSettings):
     if cfg.algo.name == 'EPOM':
         algo = EPOM(cfg.algo)
-    elif cfg.algo.name == 'RePlan':
+    elif cfg.algo.name == 'A-with-direction': #RePlan
         algo = RePlan(cfg.algo)
     else:
         raise KeyError(f"No algorithm with name: {cfg.algo}")
