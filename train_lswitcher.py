@@ -136,6 +136,7 @@ def collect_samples(cfg: EstimatorSettings):
         env = PolicyEstimationWrapper(env, experience_holder, cfg)
 
         dones = [False]
+        truncated = [False]
         obs , infos  = env.reset()
         algo.after_reset()
         log.debug(
