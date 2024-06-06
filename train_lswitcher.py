@@ -140,7 +140,7 @@ def collect_samples(cfg: EstimatorSettings):
         algo.after_reset()
         log.debug(
             f'collected: {experience_holder.get_progress_str()}, map: {env.grid_config.map_name}, num_agents: {env.grid_config.num_agents}')
-        while not all(dones):
+        while not (all(dones) or all(truncated)):
             action = algo.act(obs)
             obs, _, dones, truncated, info = env.step(action)
             algo.after_step(dones)
