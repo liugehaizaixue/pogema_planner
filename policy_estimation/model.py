@@ -25,7 +25,7 @@ class PolicyEstimationModel(nn.Module):
             target_xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
         )
 
-        self.encoder = ResnetEncoder(cfg, observation_space, Timing())
+        self.encoder = ResnetEncoder(cfg, observation_space)
         self.value_head = nn.Sequential(
             nn.Linear(self.encoder.get_encoder_out_size(), 512),
             nonlinearity(cfg),
