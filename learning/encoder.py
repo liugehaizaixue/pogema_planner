@@ -15,6 +15,7 @@ class ResnetEncoder(Encoder):
     def __init__(self, cfg, obs_space):
         super().__init__(cfg)
         # noinspection Pydantic
+        print(cfg.encoder_config)
         self.encoder_cfg: EncoderConfig = EncoderConfig(**cfg.encoder_config)
         self.use_cbam = self.encoder_cfg.use_cbam
         input_ch = obs_space['obs'].shape[0]

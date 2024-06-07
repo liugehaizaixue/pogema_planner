@@ -20,11 +20,11 @@ class PolicyEstimationModel(nn.Module):
 
         full_size = 5 * 2 + 1
         observation_space = gym.spaces.Dict(
-            obs=gym.spaces.Box(0.0, 1.0, shape=(3, full_size, full_size)),
+            obs=gym.spaces.Box(-1.0, 1, shape=(3, full_size, full_size)),
             xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
             target_xy=Box(low=-1024, high=1024, shape=(2,), dtype=int),
+            direction=Box(low=-1, high=1, shape=(2,), dtype=int),
         )
-
         self.encoder = ResnetEncoder(cfg, observation_space)
         self.value_head = nn.Sequential(
             nn.Linear(self.encoder.get_encoder_out_size(), 512),
