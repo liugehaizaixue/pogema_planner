@@ -127,16 +127,17 @@ class MatrixObservationWrapper(ObservationWrapper):
     @staticmethod
     def to_matrix(observations):
         result = []
-        obs_radius = observations[0]['obstacles'].shape[0] // 2
-        for agent_idx, obs in enumerate(observations):
-            result.append(
-                {"obs": np.concatenate([obs['obstacles'][None], obs['agents'][None],
-                                        MatrixObservationWrapper.get_square_target(*obs['xy'], *obs['target_xy'],
-                                                                                   obs_radius)[None]]).astype(float32),
-                 "xy": np.array(obs['xy'], dtype=float32),
-                 "target_xy": np.array(obs['target_xy'], dtype=float32),
-                 "direction": np.array(obs['direction'], dtype=float32),
-                 })
+        if observations:
+            obs_radius = observations[0]['obstacles'].shape[0] // 2
+            for agent_idx, obs in enumerate(observations):
+                result.append(
+                    {"obs": np.concatenate([obs['obstacles'][None], obs['agents'][None],
+                                            MatrixObservationWrapper.get_square_target(*obs['xy'], *obs['target_xy'],
+                                                                                    obs_radius)[None]]).astype(float32),
+                    "xy": np.array(obs['xy'], dtype=float32),
+                    "target_xy": np.array(obs['target_xy'], dtype=float32),
+                    "direction": np.array(obs['direction'], dtype=float32),
+                    })
         return result
 
     @staticmethod

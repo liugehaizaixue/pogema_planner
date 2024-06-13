@@ -8,7 +8,7 @@ from sample_factory.utils.timing import Timing
 from torch import nn
 
 from learning.encoder import ResnetEncoder
-from learning.epom_config import Experiment
+from learning.epom_config import Experiment , EncoderConfig
 
 
 class PolicyEstimationModel(nn.Module):
@@ -16,7 +16,9 @@ class PolicyEstimationModel(nn.Module):
     def __init__(self, cfg=None):
         super().__init__()
         if cfg is None:
-            cfg = Experiment()
+            print("cfg is None")
+            exp = Experiment()
+            cfg = Namespace(**exp.dict())
 
         full_size = 5 * 2 + 1
         observation_space = gym.spaces.Dict(
@@ -26,11 +28,12 @@ class PolicyEstimationModel(nn.Module):
             direction=Box(low=-1, high=1, shape=(2,), dtype=int),
         )
         self.encoder = ResnetEncoder(cfg, observation_space)
+        encoder_cfg: EncoderConfig = EncoderConfig(**cfg.encoder_config)
         self.value_head = nn.Sequential(
-            nn.Linear(self.encoder.get_encoder_out_size(), 512),
-            nonlinearity(cfg),
+            nn.Linear(self.encoder.get_out_size(), 512),
+            nonlinearity(encoder_cfg),
             nn.Linear(512, 512),
-            nonlinearity(cfg),
+            nonlinearity(encoder_cfg),
             nn.Linear(512, 1),
         )
 

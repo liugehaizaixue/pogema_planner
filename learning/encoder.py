@@ -32,11 +32,11 @@ class ResnetEncoder(Encoder):
             ])
 
             for j in range(res_blocks):
-                layers.append(ResBlock(cfg, out_channels, out_channels, self.use_cbam))
+                layers.append(ResBlock(self.encoder_cfg, out_channels, out_channels, self.use_cbam))
 
             curr_input_channels = out_channels
 
-        layers.append(nonlinearity(cfg, inplace = True))
+        layers.append(nonlinearity(self.encoder_cfg, inplace = True))
 
         self.conv_head = nn.Sequential(*layers)
         self.conv_head_out_size = calc_num_elements(self.conv_head, obs_space['obs'].shape)
