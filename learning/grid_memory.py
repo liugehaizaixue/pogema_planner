@@ -162,14 +162,11 @@ class MultipleGridMemory:
 
 
 class GridMemoryWrapper(gymnasium.ObservationWrapper):
-    def __init__(self, env, obs_radius, memory_type="default", display_directions =False):
+    def __init__(self, env, obs_radius, memory_type="default"):
         super().__init__(env)
         self.obs_radius = obs_radius
         size = self.obs_radius * 2 + 1
-        if display_directions:
-            max_agents_value = 4.0
-        else:
-            max_agents_value = 1.0
+        max_agents_value = 1.0
         if memory_type == "default":
             self.observation_space: gymnasium.spaces.Dict = gymnasium.spaces.Dict(
                 obstacles=gymnasium.spaces.Box(0.0, 1.0, shape=(size, size)),

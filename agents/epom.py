@@ -27,7 +27,6 @@ from learning.epom_config import Experiment
 import os
 from argparse import Namespace
 from learning.grid_memory import MultipleGridMemory
-from learning.obs_memory import MultipleObsMemory
 from pomapf_env.wrappers import MatrixObservationWrapper
 
 from learning.register_env import register_custom_components
@@ -53,8 +52,7 @@ class EPOM:
             self.exp = Experiment(**flat_config)
             flat_config = Namespace(**flat_config)
 
-        model_type = self.exp.environment.model_type
-        register_custom_model(model_type)
+        register_custom_model()
         env_name = self.exp.environment.env
         register_custom_components(env_name)
         config = flat_config
@@ -85,7 +83,6 @@ class EPOM:
         self.rnn_states = None
         self.env_cfg: Environment = Environment(**self.cfg.environment)
         self.mgm = MultipleGridMemory(memory_type=self.env_cfg.memory_type)
-        self.mobsm = MultipleObsMemory(memory_length=self.env_cfg.memory_length)
         self._step = 0
 
     def after_reset(self):
@@ -109,8 +106,6 @@ class EPOM:
         gm_radius = self.env_cfg.grid_memory_obs_radius
         self.mgm.modify_observation(observations, obs_radius=gm_radius if gm_radius else self.env_cfg.grid_config.obs_radius)
         observations = MatrixObservationWrapper.to_matrix(observations)
-        self.mobsm.update(observations)
-        observations = self.mobsm.get_observations_with_memory(observations)
 
         with torch.no_grad():
             obs_torch = AttrDict(self.transform_dict_observations(observations))

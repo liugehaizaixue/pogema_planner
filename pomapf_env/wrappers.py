@@ -74,19 +74,11 @@ class MultiMapWrapper(gymnasium.Wrapper):
 
 
 class MatrixObservationWrapper(ObservationWrapper):
-
-    def __init__(self, env, memory_type="default", instructive_path=False , display_directions=False):
+    def __init__(self, env, memory_type="default" ):
         super().__init__(env)
-        self.instructive_path = instructive_path
-        if instructive_path:
-            obs_ch = 4
-        else:
-            obs_ch = 3
+        obs_ch = 3
         # full_size = self.config.obs_radius * 2 + 1
-        if display_directions:
-            max_agents_value = 4.0
-        else:
-            max_agents_value = 1.0
+        max_agents_value = 1.0
         full_size = self.env.observation_space['obstacles'].shape[0]
         if memory_type == "default":
             self.observation_space = gymnasium.spaces.Dict(
@@ -140,26 +132,6 @@ class MatrixObservationWrapper(ObservationWrapper):
                     })
         return result
 
-    @staticmethod
-    def to_matrix_with_instructive_path(observations):
-        result = []
-        obs_radius = observations[0]['obstacles'].shape[0] // 2
-        for agent_idx, obs in enumerate(observations):
-            result.append(
-                {"obs": np.concatenate([obs['obstacles'][None], obs['agents'][None],
-                                        obs['instructive_path'][None],
-                                        MatrixObservationWrapper.get_square_target(*obs['xy'], *obs['target_xy'],
-                                                                                   obs_radius)[None]]).astype(float32),
-                 "xy": np.array(obs['xy'], dtype=float32),
-                 "target_xy": np.array(obs['target_xy'], dtype=float32),
-                 "direction": np.array(obs['direction'], dtype=float32),
-                 })
-        return result
-
-
     def observation(self, observation):
-        if self.instructive_path:
-            result = self.to_matrix_with_instructive_path(observation)
-        else:
-            result = self.to_matrix(observation)
+        result = self.to_matrix(observation)
         return result
