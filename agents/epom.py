@@ -88,6 +88,7 @@ class EPOM:
     def after_reset(self):
         torch.manual_seed(self.algo_cfg.seed)
         self.mgm.clear()
+        self.rnn_states = None
         self._step = 0
 
     def get_additional_info(self):
