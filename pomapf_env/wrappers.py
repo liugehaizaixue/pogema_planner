@@ -6,9 +6,8 @@ from gymnasium.spaces import Box, Dict
 import numpy as np
 from numpy import float32
 from pogema import GridConfig
-
 from pomapf_env.custom_maps import MAPS_REGISTRY
-
+from learning.APF import calculate_apf
 
 class RewardShaping(gymnasium.Wrapper):
     def __init__(self, env):
@@ -74,9 +73,13 @@ class MultiMapWrapper(gymnasium.Wrapper):
 
 
 class MatrixObservationWrapper(ObservationWrapper):
-    def __init__(self, env, memory_type="default" ):
+    def __init__(self, env, memory_type="default", use_apf=False ):
         super().__init__(env)
-        obs_ch = 3
+        self.use_apf = use_apf
+        if use_apf:
+            obs_ch = 5
+        else:
+            obs_ch = 3
         # full_size = self.config.obs_radius * 2 + 1
         max_agents_value = 1.0
         full_size = self.env.observation_space['obstacles'].shape[0]
@@ -117,11 +120,11 @@ class MatrixObservationWrapper(ObservationWrapper):
         return result
 
     @staticmethod
-    def to_matrix(observations):
+    def to_matrix(observations, use_apf=False):
         result = []
         if observations:
             obs_radius = observations[0]['obstacles'].shape[0] // 2
-            for agent_idx, obs in enumerate(observations):
+            for agent_idx, obs in enumerate(observations):   
                 result.append(
                     {"obs": np.concatenate([obs['obstacles'][None], obs['agents'][None],
                                             MatrixObservationWrapper.get_square_target(*obs['xy'], *obs['target_xy'],
@@ -130,8 +133,11 @@ class MatrixObservationWrapper(ObservationWrapper):
                     "target_xy": np.array(obs['target_xy'], dtype=float32),
                     "direction": np.array(obs['direction'], dtype=float32),
                     })
+                if use_apf:
+                    result[-1]['obs'] = np.concatenate([result[-1]['obs'], calculate_apf(obs['obstacles'], obs['agents'],
+                                                                                      obs['target_xy'])[None]])
         return result
 
     def observation(self, observation):
-        result = self.to_matrix(observation)
+        result = self.to_matrix(observation,self.use_apf)
         return result

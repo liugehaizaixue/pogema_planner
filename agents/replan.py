@@ -8,7 +8,7 @@ from pydantic import Extra
 # from learning.grid_memory import MultipleGridMemory
 from copy import deepcopy
 from planning.replan_algo import RePlanBase, FixLoopsWrapper, NoPathSoRandomOrStayWrapper, FixNonesWrapper
-from pomapf_env.wrappers import MatrixObservationWrapper
+
 
 class RePlanConfig(AlgoBase, extra=Extra.forbid):
     name: Literal['A-with-direction', 'A-star'] = 'A-with-direction'

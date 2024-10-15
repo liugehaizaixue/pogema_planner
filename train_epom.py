@@ -16,7 +16,7 @@ from learning.register_env import register_custom_components
 from learning.register_training_utils import register_custom_model, register_msg_handlers
 
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 
 def create_sf_config(exp: Experiment):
     custom_argv = [f'--env={exp.env}']

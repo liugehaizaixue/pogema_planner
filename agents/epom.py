@@ -80,6 +80,8 @@ class EPOM:
         self.device = device
         self.cfg = config
 
+        self.use_apf = self.env_cfg.use_apf
+
         self.rnn_states = None
         self.env_cfg: Environment = Environment(**self.cfg.environment)
         self.mgm = MultipleGridMemory(memory_type=self.env_cfg.memory_type)
@@ -106,7 +108,7 @@ class EPOM:
         self.mgm.update(observations)
         gm_radius = self.env_cfg.grid_memory_obs_radius
         self.mgm.modify_observation(observations, obs_radius=gm_radius if gm_radius else self.env_cfg.grid_config.obs_radius)
-        observations = MatrixObservationWrapper.to_matrix(observations)
+        observations = MatrixObservationWrapper.to_matrix(observations, self.use_apf)
 
         with torch.no_grad():
             obs_torch = AttrDict(self.transform_dict_observations(observations))

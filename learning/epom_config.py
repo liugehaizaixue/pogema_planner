@@ -16,6 +16,7 @@ class Environment(BaseModel, ):
     env: str = "POMAPF-v0"
     grid_memory_obs_radius: Optional[int] = 7 #None
     memory_type: Literal['default', 'plus', 'max'] = 'plus'
+    use_apf: bool = False
     with_animation: bool = False
     worker_index: int = None
     vector_index: int = None
@@ -89,7 +90,7 @@ class Experiment(BaseModel):
 
     ppo_clip_ratio: float = 0.1
     ppo_clip_value: float = 1.0
-    batch_size: int = 4096
+    batch_size: int = 4096 #16384
 
     num_batches_per_epoch: int = 1
     num_epochs: int = 1
