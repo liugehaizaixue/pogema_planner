@@ -1,5 +1,23 @@
 import numpy as np
 
+
+def normalize_matrices(matrix1, matrix2):
+    # 将两个矩阵展平以找到全局的最小值和最大值
+    min_value = min(np.min(matrix1), np.min(matrix2))
+    max_value = max(np.max(matrix1), np.max(matrix2))
+
+    abs_value = max(abs(max_value), abs(min_value))
+    # 归一化函数，将矩阵映射到[-1, 1]范围
+    def normalize(matrix, abs_value):
+        if abs_value == 0:
+            return matrix
+        return matrix / abs_value
+    
+    # 对两个矩阵进行归一化
+    normalized_matrix1 = normalize(matrix1, abs_value)
+    normalized_matrix2 = normalize(matrix2, abs_value)
+    return normalized_matrix1, normalized_matrix2
+
 def calculate_apf(obstacle_matrix, agents_matrix, destination_matrix, repulsion_coeff1=0.3, repulsion_coeff2=0.3):
     """ 计算人工势场（APF） """
     matrix = obstacle_matrix + agents_matrix
@@ -22,8 +40,12 @@ def calculate_apf(obstacle_matrix, agents_matrix, destination_matrix, repulsion_
                 dx = destination[1] - j
                 dy = destination[0] - i
                 magnitude = np.sqrt(dx**2 + dy**2)
-                attraction_x = dx / magnitude
-                attraction_y = -dy / magnitude
+                if magnitude > 0:  # 避免除以零
+                    attraction_x = dx / magnitude
+                    attraction_y = -dy / magnitude
+                else:
+                    # 该点为目的地，则引力为0斥力也应该为0
+                    continue
 
                 # 计算障碍物斥力
                 repulsion_x, repulsion_y = 0, 0
@@ -52,7 +74,7 @@ def calculate_apf(obstacle_matrix, agents_matrix, destination_matrix, repulsion_
                 potential_vectors_x[i, j] = 0
                 potential_vectors_y[i, j] = 0
 
-    return potential_vectors_x, potential_vectors_y
+    return normalize_matrices(potential_vectors_x, potential_vectors_y)
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
@@ -85,7 +107,8 @@ if __name__ == "__main__":
     # 计算人工势场
     potential_vectors_x, potential_vectors_y = calculate_apf(matrix_obstacle , matrix_agents, matrix_destination)
 
-    print(potential_vectors_x[2,4], potential_vectors_y[2,4])
+    print(potential_vectors_x)
+    print(potential_vectors_y)
     # 绘制矩阵和势场
     fig, ax = plt.subplots()
     ax.imshow(matrix_destination, cmap='gray', origin='upper')
