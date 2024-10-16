@@ -125,17 +125,17 @@ class MatrixObservationWrapper(ObservationWrapper):
         if observations:
             obs_radius = observations[0]['obstacles'].shape[0] // 2
             for agent_idx, obs in enumerate(observations):   
+                square_target = MatrixObservationWrapper.get_square_target(*obs['xy'], *obs['target_xy'], obs_radius)
+
                 result.append(
-                    {"obs": np.concatenate([obs['obstacles'][None], obs['agents'][None],
-                                            MatrixObservationWrapper.get_square_target(*obs['xy'], *obs['target_xy'],
-                                                                                    obs_radius)[None]]).astype(float32),
+                    {"obs": np.concatenate([obs['obstacles'][None], obs['agents'][None], square_target[None]]).astype(float32),
                     "xy": np.array(obs['xy'], dtype=float32),
                     "target_xy": np.array(obs['target_xy'], dtype=float32),
                     "direction": np.array(obs['direction'], dtype=float32),
                     })
+                
                 if use_apf:
-                    result[-1]['obs'] = np.concatenate([result[-1]['obs'], calculate_apf(obs['obstacles'], obs['agents'],
-                                                                                      obs['target_xy'])[None]])
+                    result[-1]['obs'] = np.concatenate([result[-1]['obs'], calculate_apf(obs['obstacles'], obs['agents'], square_target)[None]])
         return result
 
     def observation(self, observation):
