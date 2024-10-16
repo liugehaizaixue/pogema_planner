@@ -15,13 +15,16 @@ def calculate_apf(obstacle_matrix, agents_matrix, destination_matrix, repulsion_
     dy = destination[0] - grid_y
     dist_to_dest = np.hypot(dx, dy)
 
-    attraction_x = dx / dist_to_dest
-    attraction_y = -dy / dist_to_dest
-    attraction_x[dist_to_dest == 0] = 0
-    attraction_y[dist_to_dest == 0] = 0
+    attraction_x = np.zeros_like(dx, dtype=float)  # 创建与 dx 同形状的零数组
+    attraction_y = np.zeros_like(dy, dtype=float) # 创建与 dy 同形状的零数组
 
-    potential_vectors_x = attraction_x.copy()
-    potential_vectors_y = attraction_y.copy()
+    # 安全地执行条件除法
+    np.divide(dx, dist_to_dest, out=attraction_x, where=(dist_to_dest != 0))
+    np.divide(-dy, dist_to_dest, out=attraction_y, where=(dist_to_dest != 0))
+
+
+    potential_vectors_x = attraction_x
+    potential_vectors_y = attraction_y
 
     # 使用单个调用来处理所有障碍物的斥力
     for coeff, obstacles in [(repulsion_coeff1, obstacle_matrix == 1), (repulsion_coeff2, agents_matrix == 1)]:
@@ -72,6 +75,8 @@ if __name__ == "__main__":
 
     # 计算人工势场
     start_time = time.time()
+    for i in range(100):
+        potential_vectors_x, potential_vectors_y = calculate_apf(matrix_obstacle, matrix_agents, matrix_destination)
     potential_vectors_x, potential_vectors_y = calculate_apf(matrix_obstacle, matrix_agents, matrix_destination)
     end_time = time.time()
     print(f"APF calculation took {end_time - start_time} seconds.")
