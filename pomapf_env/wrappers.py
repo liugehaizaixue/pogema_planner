@@ -135,7 +135,8 @@ class MatrixObservationWrapper(ObservationWrapper):
                     })
                 
                 if use_apf:
-                    result[-1]['obs'] = np.concatenate([result[-1]['obs'], calculate_apf(obs['obstacles'], obs['agents'], square_target)[None]])
+                    matrix_x , matrix_y = calculate_apf(obs['obstacles'], obs['agents'], square_target)
+                    result[-1]['obs'] = np.concatenate([result[-1]['obs'], matrix_x[None] , matrix_y[None]])
         return result
 
     def observation(self, observation):
