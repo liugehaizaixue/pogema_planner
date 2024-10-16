@@ -18,7 +18,7 @@ def normalize_matrices(matrix1, matrix2):
 
     normalized_matrix1 = normalize(matrix1, abs_value)
     normalized_matrix2 = normalize(matrix2, abs_value)
-    return normalized_matrix1, normalized_matrix2
+    return normalized_matrix1.cpu().numpy(), normalized_matrix2.cpu().numpy()
 
 def calculate_apf(obstacle_matrix, agents_matrix, destination_matrix, repulsion_coeff1=0.3, repulsion_coeff2=0.3, device='cuda'):
     # 将矩阵移动到 GPU
@@ -104,10 +104,8 @@ if __name__ == "__main__":
     potential_vectors_x, potential_vectors_y = calculate_apf(matrix_obstacle, matrix_agents, matrix_destination, device=device)
     # print(potential_vectors_x)
     # print(potential_vectors_y)
-    # 将结果移回 CPU 进行绘图
-    potential_vectors_x = potential_vectors_x.cpu().numpy()
-    potential_vectors_y = potential_vectors_y.cpu().numpy()
 
+    # 将结果移回 CPU 进行绘图
     # 绘制结果
     fig, ax = plt.subplots()
     ax.imshow(matrix_destination, cmap='gray', origin='upper')
