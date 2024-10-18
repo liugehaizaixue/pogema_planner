@@ -80,10 +80,9 @@ class EPOM:
         self.device = device
         self.cfg = config
 
-        self.use_apf = self.env_cfg.use_apf
-
         self.rnn_states = None
         self.env_cfg: Environment = Environment(**self.cfg.environment)
+        self.use_apf = self.env_cfg.use_apf
         self.mgm = MultipleGridMemory(memory_type=self.env_cfg.memory_type)
         self._step = 0
 
