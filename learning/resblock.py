@@ -14,6 +14,7 @@ class ResBlock(nn.Module):
             nn.Conv2d(output_ch, output_ch, kernel_size=3, stride=1, padding=1),  # padding SAME
         ]
         if use_cbam:
+            nonlinearity(cfg), # add non-linearity?
             layers.append(CBAMBlock(channel=output_ch, reduction=4, kernel_size=3))
 
         self.res_block_core = nn.Sequential(*layers)

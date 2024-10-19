@@ -6,7 +6,8 @@ def normalize_matrices(matrix1, matrix2):
         return matrix1, matrix2
     return matrix1 / abs_max, matrix2 / abs_max
 
-def calculate_apf(obstacle_matrix, agents_matrix, destination_matrix, repulsion_coeff1=0.3, repulsion_coeff2=0.3):
+
+def calculate_apf(obstacle_matrix, agents_matrix, destination_matrix, repulsion_coeff1=0.3, repulsion_coeff2=0.5, additional_repulsion_coeff=0.2):
     """ 计算人工势场（APF） """
     matrix = obstacle_matrix + agents_matrix
     destination = np.argwhere(destination_matrix == 1)[0]
@@ -15,18 +16,15 @@ def calculate_apf(obstacle_matrix, agents_matrix, destination_matrix, repulsion_
     dy = destination[0] - grid_y
     dist_to_dest = np.hypot(dx, dy)
 
-    attraction_x = np.zeros_like(dx, dtype=float)  # 创建与 dx 同形状的零数组
-    attraction_y = np.zeros_like(dy, dtype=float) # 创建与 dy 同形状的零数组
+    attraction_x = np.zeros_like(dx, dtype=float)
+    attraction_y = np.zeros_like(dy, dtype=float)
 
-    # 安全地执行条件除法
     np.divide(dx, dist_to_dest, out=attraction_x, where=(dist_to_dest != 0))
     np.divide(-dy, dist_to_dest, out=attraction_y, where=(dist_to_dest != 0))
-
 
     potential_vectors_x = attraction_x
     potential_vectors_y = attraction_y
 
-    # 使用单个调用来处理所有障碍物的斥力
     for coeff, obstacles in [(repulsion_coeff1, obstacle_matrix == 1), (repulsion_coeff2, agents_matrix == 1)]:
         odx = grid_x[:, :, np.newaxis] - np.argwhere(obstacles)[:, 1]
         ody = grid_y[:, :, np.newaxis] - np.argwhere(obstacles)[:, 0]
@@ -36,8 +34,20 @@ def calculate_apf(obstacle_matrix, agents_matrix, destination_matrix, repulsion_
         potential_vectors_x += np.sum(repulsion_x, axis=2)
         potential_vectors_y += np.sum(repulsion_y, axis=2)
 
+    # 添加-1点的处理
+    special_obstacles = obstacle_matrix == -1
+    center_x = matrix.shape[1] // 2
+    center_y = matrix.shape[0] // 2
+    sdx = grid_x - center_x
+    sdy = grid_y - center_y
+    special_magnitude = np.hypot(sdx, sdy)
+    special_repulsion_x = sdx / np.maximum(special_magnitude**2, 1e-10) * additional_repulsion_coeff
+    special_repulsion_y = -sdy / np.maximum(special_magnitude**2, 1e-10) * additional_repulsion_coeff
+    potential_vectors_x += special_repulsion_x * special_obstacles
+    potential_vectors_y += special_repulsion_y * special_obstacles
+
     # 障碍物区域的势场为零
-    zero_areas = (matrix != 0) | (destination_matrix != 0)
+    zero_areas = ((matrix != 0) & (obstacle_matrix != -1)) | (destination_matrix != 0)
     potential_vectors_x[zero_areas] = 0
     potential_vectors_y[zero_areas] = 0
 
@@ -49,8 +59,8 @@ if __name__ == "__main__":
     import time
     # 定义5x5矩阵, -1 不可见 ， 0 可通行， 1静态障碍物，2智能体，3目的地
     matrix_obstacle = np.array([
-        [0, 1, 0, 1, 0], 
-        [0, 1, 0, 1, 0],
+        [-1, 1, 0, 1, 0], 
+        [-1, 1, 0, 1, 0],
         [0, 1, 0, 0, 0],
         [0, 0, 0, 1, 0],
         [0, 1, 0, 0, 0]
@@ -88,6 +98,8 @@ if __name__ == "__main__":
     # 初始化网格，用于可视化势场向量
     x_vals, y_vals = np.meshgrid(np.arange(matrix_agents.shape[0]), np.arange(matrix_agents.shape[1]))
     
+    print(potential_vectors_x)
+    print(potential_vectors_y)
     # 绘制向量场
     ax.quiver(x_vals, y_vals, potential_vectors_x, potential_vectors_y, color='r')
 
