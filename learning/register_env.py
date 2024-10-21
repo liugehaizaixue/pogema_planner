@@ -10,7 +10,7 @@ from pomapf_env.wrappers import MatrixObservationWrapper
 
 
 def create_pogema_env(cfg: Environment=None):
-    env = make_pomapf(grid_config=cfg.grid_config)
+    env = make_pomapf(grid_config=cfg.grid_config , density_reward=cfg.density_reward)
     gm_radius = cfg.grid_memory_obs_radius
     memory_type = cfg.memory_type
     use_apf = cfg.use_apf

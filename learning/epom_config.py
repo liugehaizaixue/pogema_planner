@@ -25,6 +25,7 @@ class Environment(BaseModel, ):
     agent_bins: Optional[list] = [64, 128, 256, 256]
     use_maps: bool = True
     every_step_metrics: bool = False
+    density_reward: bool = False
 
 class CoreConfig(BaseModel):
     nhead: int = 8

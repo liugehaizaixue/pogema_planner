@@ -10,20 +10,27 @@ from pomapf_env.custom_maps import MAPS_REGISTRY
 from learning.APF import calculate_apf
 
 class RewardShaping(gymnasium.Wrapper):
-    def __init__(self, env):
+    def __init__(self, env, density_reward = False):
         super().__init__(env)
         self._previous_loc = None
+        self.density_reward = density_reward
 
     def step(self, action):
         observations, rewards, dones, truncated, infos = self.env.step(action)
         for agent_idx in range(self.get_num_agents()):
+            # [TODO] ? 是否需要判断agent已完成任务
             reward = rewards[agent_idx]
             reward -= 0.0001
             if action[agent_idx] != 0:
                 if tuple(self._previous_loc[agent_idx]) == (*observations[agent_idx]['xy'] , observations[agent_idx]['direction']):
                     reward -= 0.0002
+            
+            if self.density_reward: 
+                reward += self.get_density_reward(observations[agent_idx])
+
             rewards[agent_idx] = reward
             self._previous_loc[agent_idx] = [*observations[agent_idx]['xy'] , observations[agent_idx]['direction']] 
+
 
         return observations, rewards, dones, truncated, infos
 
@@ -32,6 +39,22 @@ class RewardShaping(gymnasium.Wrapper):
         self._previous_loc = [[0, 0, obs['direction'] ] for obs in observation]
 
         return observation, infos
+    
+    def get_density_reward(self, observation):
+        # [TODO]
+        # Reward based on the density of agents
+        agents = np.sum( observation['agents'] == 1) # 至少为1，因为有自己
+        # all_size = np.sum( observation['obstacles'] != -1) # 至少为2 ，不可能为1
+        free_size = np.sum( observation['obstacles'] == 0) # 最少为1，即面前只有一个障碍物，此时agents一定是1
+        if free_size == 1: 
+            density = 0
+        else:
+            density = (agents-1) / (free_size - 1)  # 考虑 障碍物密度 
+        # density = (agents-1) / (all_size - 1)  # 不考虑 障碍物密度 
+        reward = -0.0001 * density
+        return reward
+            
+
 
 
 class MultiMapWrapper(gymnasium.Wrapper):
