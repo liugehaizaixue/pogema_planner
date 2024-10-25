@@ -44,13 +44,14 @@ class RewardShaping(gymnasium.Wrapper):
         # [TODO]
         # Reward based on the density of agents
         agents = np.sum( observation['agents'] == 1) # 至少为1，因为有自己
-        # all_size = np.sum( observation['obstacles'] != -1) # 至少为2 ，不可能为1
-        free_size = np.sum( observation['obstacles'] == 0) # 最少为1，即面前只有一个障碍物，此时agents一定是1
-        if free_size == 1: 
-            density = 0
-        else:
-            density = (agents-1) / (free_size - 1)  # 考虑 障碍物密度 
-        # density = (agents-1) / (all_size - 1)  # 不考虑 障碍物密度 
+        obstacles = np.sum( observation['obstacles'] == 1) # 至少为0
+        all_size = np.sum( observation['agents'] != -1) # 至少为2 ，不可能为1
+        # free_size = np.sum( observation['obstacles'] == 0) # 最少为1，即面前只有一个障碍物，此时agents一定是1
+        # if free_size == 1: 
+        #     density = 0
+        # else:
+        #     density = (agents-1) / (free_size - 1)  # 考虑 障碍物密度 
+        density = (obstacles + agents-1) / (all_size - 1)  # 不考虑 障碍物密度 
         reward = -0.0001 * density
         return reward
             
