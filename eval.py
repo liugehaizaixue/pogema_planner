@@ -51,7 +51,7 @@ def main():
     algo_list = ["Replan" , "EPOM"]
 
     score_table = PrettyTable()
-    score_table.field_names = ["Algorithm", "Num of Agents","Avg ISR", "Avg CSR", "Avg Episode Length"]
+    score_table.field_names = ["Algorithm", "Num of Agents","Avg ISR", "Avg CSR", "Avg Episode Length", "Avg ConflictNums"]
 
     test_maps = get_test_maps()
 
