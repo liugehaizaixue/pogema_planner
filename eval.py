@@ -66,6 +66,7 @@ def main():
             _ISR = 0
             _CSR = 0
             _ep_length = 0
+            _conflict_nums = 0
 
             # 构造参数列表
             args_list = [(algo_name, map_name, num_agents, seed) for map_name in test_maps for seed in range(10)]
@@ -83,12 +84,13 @@ def main():
                     _ISR += result['ISR']
                     _CSR += result['CSR']
                     _ep_length += result['ep_length']
+                    _conflict_nums += result['conflict_nums']
             except KeyboardInterrupt:
                 pool.terminate()
                 pool.join()
                 os.kill(os.getpid(), signal.SIGINT)
 
-            score_table.add_row([algo_name, num_agents , _ISR/_step, _CSR/_step, _ep_length/_step])
+            score_table.add_row([algo_name, num_agents , _ISR/_step, _CSR/_step, _ep_length/_step , _conflict_nums/_step])
             new_row = score_table.get_string(start=len(score_table._rows) - 1, end=len(score_table._rows))
             print(new_row)
             write_into_file(score_table, algo_name, current_time)
