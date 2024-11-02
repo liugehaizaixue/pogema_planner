@@ -3,7 +3,6 @@ from sample_factory.algo.utils.torch_utils import calc_num_elements
 from sample_factory.model.encoder import Encoder
 from sample_factory.model.model_utils import nonlinearity
 from sample_factory.utils.utils import log
-from learning.CBAM import CBAMBlock
 from learning.resblock import ResBlock
 from torch import nn
 import torch
@@ -17,7 +16,7 @@ class ResnetEncoder(Encoder):
         # noinspection Pydantic
         print(cfg.encoder_config)
         self.encoder_cfg: EncoderConfig = EncoderConfig(**cfg.encoder_config)
-        self.use_cbam = self.encoder_cfg.use_cbam
+        self.use_attention = self.encoder_cfg.use_attention
         input_ch = obs_space['obs'].shape[0]
         log.debug('Num input channels: %d', input_ch)
 
@@ -32,7 +31,7 @@ class ResnetEncoder(Encoder):
             ])
 
             for j in range(res_blocks):
-                layers.append(ResBlock(self.encoder_cfg, out_channels, out_channels, self.use_cbam))
+                layers.append(ResBlock(self.encoder_cfg, out_channels, out_channels, self.use_attention))
 
             curr_input_channels = out_channels
 

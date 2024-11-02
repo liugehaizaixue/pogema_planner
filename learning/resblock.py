@@ -1,10 +1,11 @@
 from sample_factory.model.model_utils import nonlinearity
 from learning.CBAM import CBAMBlock
+from learning.SE import SEBlock
 from torch import Tensor, nn
 
 
 class ResBlock(nn.Module):
-    def __init__(self, cfg, input_ch, output_ch, use_cbam=False):
+    def __init__(self, cfg, input_ch, output_ch, use_attention=None):
         super().__init__()
 
         layers = [
@@ -13,9 +14,12 @@ class ResBlock(nn.Module):
             nonlinearity(cfg),
             nn.Conv2d(output_ch, output_ch, kernel_size=3, stride=1, padding=1),  # padding SAME
         ]
-        if use_cbam:
+        if use_attention == "cbam":
             nonlinearity(cfg), # add non-linearity?
-            layers.append(CBAMBlock(channel=output_ch, reduction=4, kernel_size=3))
+            layers.append(CBAMBlock(channel=output_ch, reduction=4))
+        elif use_attention == "se":
+            nonlinearity(cfg), # add non-linearity?
+            layers.append(SEBlock(output_ch, reduction=4))
 
         self.res_block_core = nn.Sequential(*layers)
 
