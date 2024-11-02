@@ -1,7 +1,12 @@
 import numpy as np
 
+def normalize_matrices(matrix):
+    abs_max = np.max(matrix)
+    if abs_max == 0:
+        return matrix
+    return matrix / abs_max
 
-def calculate_apf(obstacle_matrix, agents_matrix, destination_matrix, k_att=1.5, repulsion_coeff1=0.3, repulsion_coeff2=0.5, special_k_att=0.2):
+def calculate_apf(obstacle_matrix, agents_matrix, destination_matrix, k_att=0.6, repulsion_coeff1=1, repulsion_coeff2=0.5, special_k_att=0.2):
     """ 计算人工势场（APF） """
     matrix = obstacle_matrix + agents_matrix
     destination = np.argwhere(destination_matrix == 1)[0]
@@ -14,7 +19,7 @@ def calculate_apf(obstacle_matrix, agents_matrix, destination_matrix, k_att=1.5,
     U_rep = np.zeros_like(matrix, dtype=float)
     U_special = np.zeros_like(matrix, dtype=float)
     # U_total = np.zeros_like(matrix, dtype=float)
-    np.multiply(dist_to_dest, k_att , out=U_att)
+    np.multiply(dist_to_dest, 0.5*k_att , out=U_att)
 
 
     for coeff, obstacles in [(repulsion_coeff1, obstacle_matrix == 1), (repulsion_coeff2, agents_matrix == 1)]:
@@ -37,7 +42,11 @@ def calculate_apf(obstacle_matrix, agents_matrix, destination_matrix, k_att=1.5,
 
     # U_total = U_att + U_rep + U_special
 
-    return U_att , U_rep , U_special
+    if np.any(np.isinf(U_rep)):
+        max_value = 2*np.max(U_rep[~np.isinf(U_rep)])
+        U_rep[np.isinf(U_rep)] = max_value
+
+    return normalize_matrices(U_att) , normalize_matrices(U_rep) , U_special
 
 
 if __name__ == "__main__":
@@ -71,12 +80,44 @@ if __name__ == "__main__":
 
     # 计算人工势场
     start_time = time.time()
-    for i in range(100):
+    for i in range(1000):
         U_att , U_rep , U_special = calculate_apf(matrix_obstacle, matrix_agents, matrix_destination)
     end_time = time.time()
     print(f"APF calculation took {end_time - start_time} seconds.")
 
-    U_total = U_att + U_special + U_rep
+    # U_total = U_att + U_special + U_rep
+    U_total = U_att + U_rep
+
+    # if np.any(np.isinf(U_total)):
+    #     max_value = 1.2*np.max(U_total[~np.isinf(U_total)])
+    #     U_total[np.isinf(U_total)] = max_value
+    # print(U_total)
+    # # 计算梯度
+    grad_y, grad_x = np.gradient(U_total , edge_order=1)
+
+    print(grad_x)
+
+    print(grad_y)
+
+    # 绘制势场梯度
+    fig, ax = plt.subplots()
+    ax.imshow(matrix_destination, cmap='gray', origin='upper')
+
+    # 初始化网格，用于可视化势场向量
+    x_vals, y_vals = np.meshgrid(np.arange(matrix_agents.shape[0]), np.arange(matrix_agents.shape[1]))
+    
+    # 绘制向量场
+    ax.quiver(x_vals, y_vals, -grad_x, grad_y, color='r')
+
+    # 标记目的地
+    destination = np.argwhere(matrix_destination == 1)[0]
+    ax.text(destination[1], destination[0], 'D', color='blue', ha='center', va='center', fontsize=16)
+
+    plt.title("Matrix with Artificial Potential Field (APF)")
+
+    plt.show()
+
+    
     # 绘制吸引势能、斥力势能、特殊斥力势能和总势能
     fig, ax = plt.subplots(1, 4, figsize=(20, 5))
 
