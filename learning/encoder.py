@@ -47,9 +47,9 @@ class ResnetEncoder(Encoder):
             coordinates_input_size = 4
         self.coordinates_mlp = nn.Sequential(
             nn.Linear(coordinates_input_size, self.encoder_cfg.hidden_size),
-            nn.ReLU(),
+            nonlinearity(cfg),
             nn.Linear(self.encoder_cfg.hidden_size, self.encoder_cfg.hidden_size),
-            nn.ReLU(),
+            nonlinearity(cfg),
         )
 
         self.encoder_out_size = self.conv_head_out_size + self.encoder_cfg.hidden_size
@@ -80,6 +80,9 @@ class ResnetEncoder(Encoder):
         x = torch.cat([x, coordinates_x], -1)
 
         if self.encoder_cfg.extra_fc_layers:
+            residual = x  # Store the input as residual
             x = self.extra_linear(x)
+            x += residual  # Add the residual for the residual connection
+            
         return x
 

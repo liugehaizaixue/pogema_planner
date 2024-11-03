@@ -47,7 +47,7 @@ class EncoderConfig(BaseModel):
     nonlinearity: Literal['elu', 'relu', 'tanh'] = 'relu'
     hidden_size: int = 512
     with_direction = True
-    use_attention = None  # "cbam 、se 、 None"
+    use_attention: Optional[str] = None  # "cbam 、se 、 None"
 
 class Experiment(BaseModel):
     environment: Environment = Environment()
