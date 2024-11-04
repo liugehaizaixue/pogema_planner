@@ -80,9 +80,7 @@ class ResnetEncoder(Encoder):
         x = torch.cat([x, coordinates_x], -1)
 
         if self.encoder_cfg.extra_fc_layers:
-            residual = x  # Store the input as residual
             x = self.extra_linear(x)
-            x += residual  # Add the residual for the residual connection
             
         return x
 
