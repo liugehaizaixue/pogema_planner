@@ -65,13 +65,12 @@ class ResnetEncoder(Encoder):
         return self.encoder_out_size
 
     def forward(self, x):
-        if self.encoder_cfg.with_direction:
-            coordinates_x = torch.cat([x['xy'], x['target_xy'], x['direction']], -1)
-        else:
-            coordinates_x = torch.cat([x['xy'], x['target_xy']], -1)
+        coordinates_x = torch.cat([x['xy'], x['target_xy']], -1)
         coordinates_scale = 64.0
         abs_coordinates = torch.max(torch.abs(coordinates_x), torch.tensor(coordinates_scale)) # abs绝对值
         coordinates_x /= abs_coordinates
+        if self.encoder_cfg.with_direction:
+            coordinates_x = torch.cat([coordinates_x, x['direction']], -1)
         coordinates_x = self.coordinates_mlp(coordinates_x)
 
         x = x['obs']
