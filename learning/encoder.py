@@ -73,7 +73,11 @@ class ResnetEncoder(Encoder):
             coordinates_x = torch.cat([coordinates_x, x['direction']], -1)
         coordinates_x = self.coordinates_mlp(coordinates_x)
 
-        x = x['obs']
+        obs = x['obs']
+        # 归一化前两个通道
+        obs[:, 0:2, :, :] = (obs[:, 0:2, :, :] + 1) / 2
+
+        x = obs
         x = self.conv_head(x)
         x = x.contiguous().view(-1, self.conv_head_out_size)
         x = torch.cat([x, coordinates_x], -1)
