@@ -8,6 +8,7 @@ from numpy import float32
 from pogema import GridConfig
 from pomapf_env.custom_maps import MAPS_REGISTRY
 from learning.APF import calculate_apf
+from learning.path_matrix import calculate_path
 
 class RewardShaping(gymnasium.Wrapper):
     def __init__(self, env, density_reward = False):
@@ -101,7 +102,7 @@ class MatrixObservationWrapper(ObservationWrapper):
         super().__init__(env)
         self.use_apf = use_apf
         if use_apf:
-            obs_ch = 5
+            obs_ch = 4 # [TODO]
         else:
             obs_ch = 3
         # full_size = self.config.obs_radius * 2 + 1
@@ -158,9 +159,9 @@ class MatrixObservationWrapper(ObservationWrapper):
                     "direction": np.array(obs['direction'], dtype=float32),
                     })
                 
-                if use_apf:
-                    matrix_x , matrix_y, _ = calculate_apf(obs['obstacles'], obs['agents'], square_target)
-                    result[-1]['obs'] = np.concatenate([result[-1]['obs'], matrix_x[None] , matrix_y[None]])
+                if use_apf: # [TODO]
+                    matrix_path = calculate_path(obs['obstacles'], square_target)
+                    result[-1]['obs'] = np.concatenate([result[-1]['obs'], matrix_path[None]])
         return result
 
     def observation(self, observation):
