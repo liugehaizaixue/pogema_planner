@@ -46,7 +46,7 @@ class EPOM:
 
         self.path = path
         self.env = None
-        config_path = join(path, 'cfg.json')
+        config_path = join(path, 'config.json')
         with open(config_path, "r") as f:
             flat_config = json.load(f)
             self.exp = Experiment(**flat_config)
