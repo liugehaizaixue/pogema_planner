@@ -48,7 +48,6 @@ class EncoderConfig(BaseModel):
     hidden_size: int = 512
     with_direction = True
     use_attention: Optional[str] = None  # "cbam 、se 、 None"
-    multi_head = False
 
 class Experiment(BaseModel):
     environment: Environment = Environment()

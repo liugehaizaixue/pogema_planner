@@ -10,6 +10,7 @@ from agents.replan import RePlan , RePlanConfig
 from agents.utils_eval import eval_algorithm
 from multiprocessing import Pool, cpu_count
 
+SEED = 10
 def get_algo_by_name(algo_name):
     if algo_name == "Replan":
         algo = RePlan(RePlanConfig(max_planning_steps=10000))
@@ -60,7 +61,7 @@ def main():
     pool = Pool(processes=num_processes , initializer=init_worker)
     for algo_name in algo_list:
         print(f"current algo_name: {algo_name}")
-        for num_agents in [64 , 128 , 192 , 256, 320, 384]:
+        for num_agents in [32, 64 , 96, 128, 160, 192, 224, 256, 288, 320, 352, 384]:
             print(f"current num_agents: {num_agents}")
             _step = 0
             _ISR = 0
@@ -69,7 +70,7 @@ def main():
             _conflict_nums = 0
 
             # 构造参数列表
-            args_list = [(algo_name, map_name, num_agents, seed) for map_name in test_maps for seed in range(10)]
+            args_list = [(algo_name, map_name, num_agents, seed) for map_name in test_maps for seed in range(SEED)]
 
             # 多进程地评估算法在不同地图上的性能
             results = pool.map_async(evaluate_algorithm_on_map, args_list)
