@@ -26,7 +26,14 @@ def run_algorithm(algo, map_name='sc1-AcrosstheCape', max_episode_steps=512, see
         anim_dir = str(pathlib.Path('renders') / algo_name)
         env = AnimationMonitor(env, AnimationConfig(egocentric_idx=0 , directory=anim_dir))
     obs, infos = env.reset()
-    algo.after_reset()
+    if algo_name == 'CBS':
+        global_obstacles = obs[0]['global_obstacles']
+        Starts = [agent['global_xy'] for agent in obs]
+        Starts_directions = [agent['direction'] for agent in obs]
+        Goals = [agent['global_target_xy'] for agent in obs]
+        algo.after_reset(global_obstacles, Starts, Starts_directions, Goals)
+    else:
+        algo.after_reset()
     results_holder = ResultsHolder()
 
     dones = [False for _ in range(len(obs))]

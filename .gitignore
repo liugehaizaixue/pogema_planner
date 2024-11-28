@@ -5,3 +5,5 @@ eval_result
 train_dir/
 wandb/
 weights/
+
+test.py
