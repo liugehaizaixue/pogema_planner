@@ -36,11 +36,11 @@ def match_maps(map_name):
     print("No matching pattern found for map_name:", map_name)
     return None
 
-def write_into_file(metrics, algo_name, current_time, task_type="finish"):
-    path = './eval_result/finish/'
+def write_into_file(metrics, algo_name, current_time, task_type="lifelong"):
+    path = './eval_result/lifelong/'
     if not os.path.exists(path):
         os.mkdir(path)
-    file_name = "eval_result/finish/"+ algo_name+"_"+task_type+"_"+current_time+".jsonl"
+    file_name = "eval_result/lifelong/"+ algo_name+"_"+task_type+"_"+current_time+".jsonl"
     with open(file_name,"a") as f:
         json.dump(metrics, f)
         f.write("\n")
@@ -48,9 +48,7 @@ def write_into_file(metrics, algo_name, current_time, task_type="finish"):
 
 def get_total_metrics(metrics):
     total_data = {
-        "ISR": 0,
-        "CSR": 0,
-        "ep_length": 0,
+        "throughput": 0,
         "conflict_nums": 0,
         "counts": 0
     }
@@ -60,9 +58,7 @@ def get_total_metrics(metrics):
         for  key , value in metric.items():
             total_data[key] += value
     
-    total_data['AVG_ISR'] = total_data['ISR'] / total_data['counts']
-    total_data['AVG_CSR'] = total_data['CSR'] / total_data['counts']
-    total_data['AVG_ep_length'] = total_data['ep_length'] / total_data['counts']
+    total_data['AVG_THROUGHPUT'] = total_data['throughput'] / total_data['counts']
     total_data['AVG_conflict_nums'] = total_data['conflict_nums'] / total_data['counts']
     return total_data
     
@@ -71,7 +67,7 @@ def evaluate_algorithm_on_map(args):
     algo_name, map_name, num_agents, seed = args
     algo = get_algo_by_name(algo_name)
     print(f"current seed: {seed} , current map: {map_name}")
-    result = eval_algorithm(algo=algo , map_name=map_name, num_agents=num_agents, seed=seed, max_episode_steps=512, animate=False)
+    result = eval_algorithm(algo=algo , map_name=map_name, num_agents=num_agents, seed=seed, max_episode_steps=512, animate=False, on_target="restart")
     result['map_name'] = map_name
     return result
 
@@ -85,7 +81,7 @@ def main():
     algo_list = ["Replan" , "EPOM"]
 
     score_table = PrettyTable()
-    score_table.field_names = ["Algorithm", "Num of Agents","Avg ISR", "Avg CSR", "Avg Episode Length", "Avg ConflictNums"]
+    score_table.field_names = ["Algorithm", "Num of Agents", "AVG THROUGHPUT", "AVG ConflictNums"]
 
     test_maps = get_test_maps()
 
@@ -114,10 +110,8 @@ def main():
                 for result in all_results:
                     map_type = match_maps(result['map_name'])
                     if map_type not in metrics:
-                        metrics[map_type] = {'ISR': 0, 'CSR': 0, 'ep_length': 0, 'conflict_nums': 0, 'counts': 0}
-                    metrics[map_type]['ISR'] += result['ISR']
-                    metrics[map_type]['CSR'] += result['CSR']
-                    metrics[map_type]['ep_length'] += result['ep_length']
+                        metrics[map_type] = {'throughput': 0, 'conflict_nums': 0, 'counts': 0}
+                    metrics[map_type]['throughput'] += result['avg_throughput']
                     metrics[map_type]['conflict_nums'] += result['conflict_nums']
                     metrics[map_type]['counts'] += 1
             except KeyboardInterrupt:
@@ -127,10 +121,10 @@ def main():
 
             total_metrics = get_total_metrics(metrics)
             metrics['total'] = total_metrics
-            score_table.add_row([algo_name, num_agents , total_metrics['AVG_ISR'], total_metrics['AVG_CSR'], total_metrics['AVG_ep_length'], total_metrics['AVG_conflict_nums']])
+            score_table.add_row([algo_name, num_agents , total_metrics['AVG_THROUGHPUT'], total_metrics['AVG_conflict_nums']])
             new_row = score_table.get_string(start=len(score_table._rows) - 1, end=len(score_table._rows))
             print(new_row)
-            write_into_file(metrics, algo_name, current_time, task_type="finish")
+            write_into_file(metrics, algo_name, current_time, task_type="lifelong")
 
     pool.close()
     pool.join()

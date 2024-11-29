@@ -10,7 +10,7 @@ class POMAPFConfig(GridConfig):
     integration: Literal['SampleFactory'] = 'SampleFactory'
     collision_system: Literal['block_both','priority'] = 'priority'
     observation_type: Literal['POMAPF', 'MAPF'] = 'POMAPF'
-    on_target: Literal['finish'] = 'finish'
+    on_target: Literal['finish','restart'] = 'finish'
     auto_reset: Literal[False] = False
     num_agents: int = 64
     obs_radius: int = 5

@@ -153,9 +153,9 @@ class EPOM:
 
 
 def example_epom(map_name='sc1-AcrosstheCape', max_episode_steps=512, seed=None, num_agents=64, main_dir='./',
-                 animate=False):
+                 animate=False, on_target="finish"):
     algo = EPOM(EpomConfig(path_to_weights=str(main_dir / Path('weights/epom'))))
-    return run_algorithm(algo, map_name, max_episode_steps, seed, num_agents, animate)
+    return run_algorithm(algo, map_name, max_episode_steps, seed, num_agents, animate, on_target)
 
 
 if __name__ == '__main__':

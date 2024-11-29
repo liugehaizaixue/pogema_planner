@@ -60,9 +60,9 @@ class RePlan:
             self.agent = FixNonesWrapper(self.agent)
 
 
-def example_replan(map_name='sc1-AcrosstheCape', max_episode_steps=512, seed=None, num_agents=64, animate=False):
+def example_replan(map_name='sc1-AcrosstheCape', max_episode_steps=512, seed=None, num_agents=64, animate=False, on_target="finish"):
     algo = RePlan(RePlanConfig(max_planning_steps=10000))
-    return run_algorithm(algo, map_name, max_episode_steps, seed, num_agents, animate)
+    return run_algorithm(algo, map_name, max_episode_steps, seed, num_agents, animate, on_target)
 
 
 if __name__ == '__main__':
