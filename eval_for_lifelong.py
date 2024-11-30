@@ -10,6 +10,7 @@ from agents.replan import RePlan , RePlanConfig
 from agents.utils_eval import eval_algorithm
 from multiprocessing import Pool, cpu_count
 import json
+from tqdm import tqdm
 
 SEEDS = 1
 def get_algo_by_name(algo_name):
@@ -99,14 +100,11 @@ def main():
             # 构造参数列表
             args_list = [(algo_name, map_name, num_agents, seed) for map_name in test_maps for seed in range(SEEDS)]
 
-            # 多进程地评估算法在不同地图上的性能
-            results = pool.map_async(evaluate_algorithm_on_map, args_list)
+            all_results = []
+            with tqdm(pool.imap_unordered(evaluate_algorithm_on_map, args_list), total=len(args_list), desc="Processing Maps") as progress:
+                for result in progress:
+                    all_results.append(result)
             try:
-                # 等待所有任务完成或手动中断
-                while not results.ready() and results._number_left != 0:
-                    time.sleep(1)
-
-                all_results = results.get()
                 for result in all_results:
                     map_type = match_maps(result['map_name'])
                     if map_type not in metrics:
