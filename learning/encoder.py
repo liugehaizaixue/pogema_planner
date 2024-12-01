@@ -31,7 +31,10 @@ class ResnetEncoder(Encoder):
             ])
 
             for j in range(res_blocks):
-                layers.append(ResBlock(self.encoder_cfg, out_channels, out_channels, self.use_attention))
+                if j == 0:
+                    layers.append(ResBlock(self.encoder_cfg, out_channels, out_channels, self.use_attention))
+                else:
+                    layers.append(ResBlock(self.encoder_cfg, out_channels, out_channels, None))
 
             curr_input_channels = out_channels
 
