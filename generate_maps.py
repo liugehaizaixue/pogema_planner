@@ -89,7 +89,7 @@ def random_generate_and_save_maps(density, seed_range=10):
 import yaml
 import os
 def maps_dict_to_yaml(filename, maps):
-    folder = os.path.dirname("exp_maps")
+    folder = os.path.dirname("exp_maps/")
     if folder and not os.path.exists(folder):
         os.makedirs(folder)  # 创建文件夹
 
