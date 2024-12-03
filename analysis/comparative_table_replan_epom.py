@@ -6,7 +6,7 @@ def read_file(file_name):
         data = f.read()
     return data
 
-files = ['./result/replan.jsonl','./result/replan.jsonl'] 
+files = ['./result/replan.jsonl','./result/epom_path_se01_gru2.jsonl'] 
 replan_data = read_file(files[0])
 epom_data = read_file(files[1])
 # 将 JSONL 字符串分行处理，每行是一个 JSON 对象
