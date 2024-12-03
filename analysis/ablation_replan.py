@@ -12,7 +12,7 @@ def read_jsonl(file_name):
     return pd.json_normalize(data)
 
 # 文件名列表，假设你的文件放在当前目录下
-files = ['./result/replan.jsonl','./result/replan_no_greedy_action.jsonl','./result/replan_no_loop_detection.jsonl','./result/replan.jsonl']  # 添加你的文件名
+files = ['./result/replan.jsonl','./result/replan_no_greedy_action.jsonl','./result/replan_no_loop_detection.jsonl','./result/replan_no_ld_no_ga.jsonl']  # 添加你的文件名
 algorithm_names = ['Replan','Replan (no greedy actions)', 'Replan (no loop detection)', 'Replan (no LD, no GA)']
 markers = ['o', 's', '^', 'D']  # 圆圈、正方形、向上的三角形
 linestyles = ['-', '-.', '-.', '-.']  # 前1实线，后三虚线
