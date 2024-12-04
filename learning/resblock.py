@@ -2,10 +2,10 @@ from sample_factory.model.model_utils import nonlinearity
 from learning.CBAM import CBAMBlock
 from learning.SE import SEBlock
 from torch import Tensor, nn
-
+from learning.epom_config import EncoderConfig
 
 class ResBlock(nn.Module):
-    def __init__(self, cfg, input_ch, output_ch, use_attention=None):
+    def __init__(self, cfg:EncoderConfig, input_ch, output_ch, use_attention=None):
         super().__init__()
 
         layers = [
