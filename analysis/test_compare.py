@@ -12,8 +12,8 @@ def read_jsonl(file_name):
     return pd.json_normalize(data)
 
 # 文件名列表，假设你的文件放在当前目录下
-files = ['./result/replan.jsonl','./result/epom_norm_best.jsonl','./result/epom_default_best.jsonl','./result/epom_path_last.jsonl','./result/epom_norm2_best.jsonl','./result/epom_path_best.jsonl']  # 添加你的文件名
-algorithm_names = ['Replan','EPOM' ,'EPOM-default-b','EPOM-p-l','EPOM-2b', 'EPOM-p-b']
+files = ['./result/replan.jsonl','./result/epom_norm_best.jsonl','./result/epom-old-best.jsonl']  # 添加你的文件名
+algorithm_names = ['Replan','EPOM' ,'EPOM-default-b']
 markers = ['o', 's', '^', 'D','v','X']  # 圆圈、正方形、向上的三角形
 linestyles = ['-', '-.', '-.', '-.','-.','-.']  # 前1实线，后三虚线
 # 解析每个文件并抽取需要的数据

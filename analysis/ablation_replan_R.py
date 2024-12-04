@@ -12,16 +12,16 @@ def read_jsonl(file_name):
     return pd.json_normalize(data)
 
 # 文件名列表，假设你的文件放在当前目录下
-files = ['./result/replan.jsonl','./result/epom_norm_best.jsonl','./result/epom_default_best.jsonl','./result/epom_path_last.jsonl','./result/epom_norm2_best.jsonl','./result/epom_path_best.jsonl']  # 添加你的文件名
-algorithm_names = ['Replan','EPOM' ,'EPOM-default-b','EPOM-p-l','EPOM-2b', 'EPOM-p-b']
-markers = ['o', 's', '^', 'D','v','X']  # 圆圈、正方形、向上的三角形
-linestyles = ['-', '-.', '-.', '-.','-.','-.']  # 前1实线，后三虚线
+files = ['./result/replan/replan.jsonl','./result/replan/replan_R3.jsonl']  # 添加你的文件名
+algorithm_names = ['Replan(R=5)','Replan(R=3)', 'Replan(R=1)']
+markers = ['o', 's', '^', 'D']  # 圆圈、正方形、向上的三角形
+linestyles = ['-', '-.', '-.', '-.']  # 前1实线，后三虚线
 # 解析每个文件并抽取需要的数据
 all_data = []
 
 for file in files:
     df = read_jsonl(file)
-    all_data.append(df[['num_agents', 'total.AVG_CSR', 'total.AVG_ISR', 'total.AVG_ep_length', 'total.AVG_conflict_nums']])
+    all_data.append(df[['num_agents', 'total.AVG_CSR', 'total.AVG_ISR', 'total.AVG_ep_length']])
 
 # 合并所有数据，方便比较
 combined_data = pd.concat(all_data, keys=algorithm_names)
@@ -47,4 +47,3 @@ def plot_metric(metric, ylabel, title):
 plot_metric('total.AVG_CSR', 'Average CSR', 'Average CSR by Algorithm')
 plot_metric('total.AVG_ISR', 'Average ISR', 'Average ISR by Algorithm')
 plot_metric('total.AVG_ep_length', 'Average Episode Length', 'Average Episode Length by Algorithm')
-plot_metric('total.AVG_conflict_nums', 'Average Conflict Nums', 'Average Conflict Nums by Algorithm')
