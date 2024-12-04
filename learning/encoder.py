@@ -50,9 +50,9 @@ class ResnetEncoder(Encoder):
             coordinates_input_size = 4
         self.coordinates_mlp = nn.Sequential(
             nn.Linear(coordinates_input_size, self.encoder_cfg.hidden_size),
-            nonlinearity(cfg),
+            nonlinearity(self.encoder_cfg,inplace = True),
             nn.Linear(self.encoder_cfg.hidden_size, self.encoder_cfg.hidden_size),
-            nonlinearity(cfg),
+            nonlinearity(self.encoder_cfg,inplace = True),
         )
 
         self.encoder_out_size = self.conv_head_out_size + self.encoder_cfg.hidden_size
