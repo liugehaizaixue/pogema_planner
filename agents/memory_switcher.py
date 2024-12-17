@@ -45,10 +45,10 @@ class MemorySwitcher(SwitcherBase):
 
 
 def example_memory_switcher(map_name='sc1-AcrosstheCape', max_episode_steps=512, seed=None, num_agents=64,
-                               main_dir='./', animate=False):
+                               main_dir='./', animate=False, on_target="finish"):
     from agents.epom import EpomConfig
     algo = MemorySwitcher(MSwitcherConfig(learning=EpomConfig(path_to_weights=str(main_dir / Path('weights/epom')))))
-    return run_algorithm(algo, map_name, max_episode_steps, seed, num_agents, animate)
+    return run_algorithm(algo, map_name, max_episode_steps, seed, num_agents, animate, on_target)
 
 
 if __name__ == '__main__':

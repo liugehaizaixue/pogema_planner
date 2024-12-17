@@ -7,6 +7,10 @@ import time
 import signal
 from agents.epom import EPOM , EpomConfig
 from agents.replan import RePlan , RePlanConfig
+from agents.assistant_switcher import AssistantSwitcher , ASwitcherConfig
+from agents.heuristic_switcher import HeuristicSwitcher , HSwitcherConfig
+from agents.density_switcher import DensitySwitcher , DSwitcherConfig
+from agents.memory_switcher import MemorySwitcher , MSwitcherConfig
 from agents.utils_eval import eval_algorithm
 from multiprocessing import Pool, cpu_count
 import json
@@ -18,6 +22,14 @@ def get_algo_by_name(algo_name):
         algo = RePlan(RePlanConfig(max_planning_steps=10000))
     elif algo_name == "EPOM":
         algo = EPOM(EpomConfig(path_to_weights=str('./' / Path('weights/epom'))))
+    elif algo_name == "ASwitcher":
+        algo = AssistantSwitcher(ASwitcherConfig(learning=EpomConfig(path_to_weights=str('./' / Path('weights/epom')))))
+    elif algo_name == "HSwitcher":
+        algo = HeuristicSwitcher(HSwitcherConfig(learning=EpomConfig(path_to_weights=str('./' / Path('weights/epom')))))
+    elif algo_name == "DSwitcher":
+        algo = DensitySwitcher(DSwitcherConfig(learning=EpomConfig(path_to_weights=str('./' / Path('weights/epom')))))
+    elif algo_name == "MSwitcher":
+        algo = MemorySwitcher(MSwitcherConfig(learning=EpomConfig(path_to_weights=str('./' / Path('weights/epom')))))
     return algo
 
 def get_test_maps():

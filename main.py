@@ -3,17 +3,20 @@ from prettytable import PrettyTable
 import time
 # from agents.epom import example_epom
 from agents.replan import example_replan
+from agents.assistant_switcher import example_assistant_switcher
 from agents.centralized import example_cbs
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 
-def example(map_name='sc1-AcrosstheCape', num_agents=5, seed=0, animate=True):
+# def example(map_name='hit', num_agents=64, seed=0, animate=True):
+def example(map_name='sc1-AcrosstheCape', num_agents=64, seed=0, animate=True):
     os.environ['OMP_NUM_THREADS'] = "1"
     os.environ['MKL_NUM_THREADS'] = "1"
 
     run_examples_funcs = [
         # example_epom,
-        example_replan,
+        # example_replan,
+        example_assistant_switcher,
         # example_cbs,
     ]
 
