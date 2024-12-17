@@ -15,13 +15,15 @@ import numpy as np
 
 class MSwitcherConfig(SwitcherBaseConfig, extra=Extra.forbid):
     name: Literal['MSwitcher'] = 'MSwitcher'
-
+    planning: RePlanConfig = RePlanConfig(fix_loops=True, add_none_if_loop=False, no_path_random=True,
+                                          use_best_move=True, fix_nones=True)
     memory_length: int = 6
     num_agents_to_switch: int = 1
 
 
 class MemorySwitcher(SwitcherBase):
     def __init__(self,cfg:MSwitcherConfig):
+        super().__init__(cfg)
         self.memories = []
         self.cfg = cfg
 

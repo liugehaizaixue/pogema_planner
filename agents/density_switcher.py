@@ -15,13 +15,12 @@ import numpy as np
 
 class DSwitcherConfig(SwitcherBaseConfig, extra=Extra.forbid):
     name: Literal['DSwitcher'] = 'DSwitcher'
-
+    planning: RePlanConfig = RePlanConfig(fix_loops=True, add_none_if_loop=False, no_path_random=True,
+                                          use_best_move=True, fix_nones=True)
     density_to_switch: float = 0.5
 
 
 class DensitySwitcher(SwitcherBase):
-    def __init__(self,cfg:DSwitcherConfig):
-        self.cfg = cfg
 
     def get_learning_use_mask(self, planning_actions, learning_actions, observations):
         return [ 1 if self.get_density(obs)>self.cfg.density_to_switch else 0 for obs in observations]
