@@ -68,3 +68,9 @@ class SwitcherBase:
                 self.learning_used += 1
             else:
                 self.planning_used += 1
+
+    def get_usage(self):
+        return {
+            'learning': self.learning_used,
+            'planning': self.planning_used
+        }

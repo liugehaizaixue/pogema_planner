@@ -30,8 +30,16 @@ def eval_algorithm(algo, map_name='sc1-AcrosstheCape', max_episode_steps=512, se
                 break
 
             actions = algo.act(obs, rew, dones, infos)
-
+    try:
+        usage = algo.get_usage()
+    except:
+        usage = {
+            'learning': 0,
+            'planning': 0
+        }
     results = results_holder.get_final()
+    results['learning'] = usage['learning']
+    results['planning'] = usage['planning']
     results['algorithm'] = algo_name
     return results
 

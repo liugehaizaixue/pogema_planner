@@ -65,7 +65,9 @@ def get_total_metrics(metrics):
         "CSR": 0,
         "ep_length": 0,
         "conflict_nums": 0,
-        "counts": 0
+        "counts": 0,
+        "planning": 0,
+        "learning": 0
     }
     for map_type, metric in metrics.items():
         if map_type == 'num_agents':
@@ -77,6 +79,8 @@ def get_total_metrics(metrics):
     total_data['AVG_CSR'] = total_data['CSR'] / total_data['counts']
     total_data['AVG_ep_length'] = total_data['ep_length'] / total_data['counts']
     total_data['AVG_conflict_nums'] = total_data['conflict_nums'] / total_data['counts']
+    total_data['AVG_planning'] = total_data['planning'] / total_data['counts']
+    total_data['AVG_learning'] = total_data['learning'] / total_data['counts']
     return total_data
     
 
@@ -98,7 +102,7 @@ def main():
     algo_list = ["Replan" , "EPOM"]
 
     score_table = PrettyTable()
-    score_table.field_names = ["Algorithm", "Num of Agents","Avg ISR", "Avg CSR", "Avg Episode Length", "Avg ConflictNums"]
+    score_table.field_names = ["Algorithm", "Num of Agents","Avg ISR", "Avg CSR", "Avg Episode Length", "Avg ConflictNums","AVG planning", "AVG learning"]
 
     test_maps = get_test_maps()
 
@@ -124,12 +128,14 @@ def main():
                 for result in all_results:
                     map_type = match_maps(result['map_name'])
                     if map_type not in metrics:
-                        metrics[map_type] = {'ISR': 0, 'CSR': 0, 'ep_length': 0, 'conflict_nums': 0, 'counts': 0}
+                        metrics[map_type] = {'ISR': 0, 'CSR': 0, 'ep_length': 0, 'conflict_nums': 0, 'counts': 0, "planning":0 , "learning":0}
                     metrics[map_type]['ISR'] += result['ISR']
                     metrics[map_type]['CSR'] += result['CSR']
                     metrics[map_type]['ep_length'] += result['ep_length']
                     metrics[map_type]['conflict_nums'] += result['conflict_nums']
                     metrics[map_type]['counts'] += 1
+                    metrics[map_type]["planning"] += result["planning"]
+                    metrics[map_type]["learning"] += result["learning"]
             except KeyboardInterrupt:
                 pool.terminate()
                 pool.join()
@@ -137,7 +143,7 @@ def main():
 
             total_metrics = get_total_metrics(metrics)
             metrics['total'] = total_metrics
-            score_table.add_row([algo_name, num_agents , total_metrics['AVG_ISR'], total_metrics['AVG_CSR'], total_metrics['AVG_ep_length'], total_metrics['AVG_conflict_nums']])
+            score_table.add_row([algo_name, num_agents , total_metrics['AVG_ISR'], total_metrics['AVG_CSR'], total_metrics['AVG_ep_length'], total_metrics['AVG_conflict_nums'], total_metrics['AVG_planning'], total_metrics['AVG_learning']])
             new_row = score_table.get_string(start=len(score_table._rows) - 1, end=len(score_table._rows))
             print(new_row)
             write_into_file(metrics, algo_name, current_time, task_type="finish")

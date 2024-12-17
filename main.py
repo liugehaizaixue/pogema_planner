@@ -28,7 +28,7 @@ def example(map_name='sc1-AcrosstheCape', num_agents=64, seed=0, animate=True):
 
     score_table = PrettyTable()
     # score_table.field_names = ["Algorithm", "ISR", "CSR", "Episode Length"]
-    score_table.field_names = ["Algorithm", "ISR", "CSR", "Episode Length", "ConflictNums"]
+    score_table.field_names = ["Algorithm", "ISR", "CSR", "Episode Length", "ConflictNums",'learning', 'planning']
 
     for run_example_func in run_examples_funcs:
         start_time = time.time()
@@ -37,7 +37,7 @@ def example(map_name='sc1-AcrosstheCape', num_agents=64, seed=0, animate=True):
         print("Time: ", end_time - start_time)
         if result:
             # score_table.add_row([result['algorithm'], result['ISR'], result['CSR'], result['ep_length'] ])
-            score_table.add_row([result['algorithm'], result['ISR'], result['CSR'], result['ep_length'], result['conflict_nums']])
+            score_table.add_row([result['algorithm'], result['ISR'], result['CSR'], result['ep_length'], result['conflict_nums'], result['learning'], result['planning']])
 
             print(score_table.get_string(start=len(score_table._rows) - 1, end=len(score_table._rows)))
 
