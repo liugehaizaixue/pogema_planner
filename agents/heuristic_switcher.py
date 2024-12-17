@@ -11,20 +11,20 @@ from pydantic import Extra
 
 from agents.replan import RePlanConfig
 from agents.utils_switching import SwitcherBaseConfig, SwitcherBase
-
+import numpy as np
 
 class HSwitcherConfig(SwitcherBaseConfig, extra=Extra.forbid):
     name: Literal['HSwitcher'] = 'HSwitcher'
     planning: RePlanConfig = RePlanConfig(fix_loops=True, add_none_if_loop=False, no_path_random=True,
                                           use_best_move=True, fix_nones=True)
 
-    num_agents_to_switch: int = 6
+    num_agents_to_switch: int = 6 #3  #最多可以看到（4+1）个智能体
 
 
 class HeuristicSwitcher(SwitcherBase):
 
     def get_learning_use_mask(self, planning_actions, learning_actions, observations):
-        return [obs['agents'].sum().sum() > self.cfg.num_agents_to_switch for obs in observations]
+        return [ np.sum(obs['agents'] == 1) > self.cfg.num_agents_to_switch for obs in observations]
 
 
 def example_heuristic_switcher(map_name='sc1-AcrosstheCape', max_episode_steps=512, seed=None, num_agents=64,
