@@ -12,10 +12,10 @@ def read_jsonl(file_name):
     return pd.json_normalize(data)
 
 # 文件名列表，假设你的文件放在当前目录下
-files = ['./result/replan/replan.jsonl','./result/replan/replan_no_greedy_action.jsonl','./result/replan/replan_no_loop_detection.jsonl','./result/replan/replan_no_ld_no_ga.jsonl','./result/replan/replan_消融记忆.jsonl','./result/replan/replan_消融3no.jsonl']  # 添加你的文件名
-algorithm_names = ['Replan','Replan (no greedy actions)', 'Replan (no loop detection)', 'Replan (no LD, no GA)','Replan (no memory)','Replan (no mem, no LD, no GA)']
-markers = ['o', 's', '^', 'D','X', 'P']  # 圆圈、正方形、向上的三角形
-linestyles = ['-', '-.', '-.', '-.', '-.', '-.']  # 前1实线，后三虚线
+files = ['./result/epom/epom-best.jsonl','./result/epom/epom-R3.jsonl','./result/epom/epom-R1.jsonl','./result/epom/epom-No-rnn.jsonl']  # 添加你的文件名
+algorithm_names = ['Epom(R=5)','Epom(R=3)', 'Epom(R=1)','Epom(no Rnn)']
+markers = ['o', 's', '^', 'D']  # 圆圈、正方形、向上的三角形
+linestyles = ['-', '-.', '-.', '-.']  # 前1实线，后三虚线
 # 解析每个文件并抽取需要的数据
 all_data = []
 
@@ -42,7 +42,7 @@ def plot_metric(metric, ylabel, title):
     plt.title(title)
     plt.legend()
     plt.grid(True)
-    plt.savefig(f'{title}.png')
+    plt.savefig(f'{ylabel}-epom.png')
     plt.show()
 
 plot_metric('total.AVG_CSR', 'Average CSR', 'Average CSR by Algorithm')
