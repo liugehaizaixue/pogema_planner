@@ -229,7 +229,7 @@ def estimation_main_loop(cfg: EstimatorSettings):
         train_dataset = generate_data_new(cfg)
         log.debug('Starting training process:')
         train(train_dataset=train_dataset, test_dataset=test_dataset, cfg=cfg, model=model)
-
+        torch.save(model.state_dict(), Path(cfg.train_dir) / 'checkpoints' / f'last——{epoch}.pth')
         best_model_path = Path(cfg.train_dir) / 'checkpoints' / 'best.pth'
         log.debug(f'Loading best model from: {best_model_path}')
 

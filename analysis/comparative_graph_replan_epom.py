@@ -1,7 +1,9 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import json
-
+import matplotlib
+matplotlib.rcParams['font.sans-serif'] = ['Microsoft YaHei']  # 或者其他字体，如 'Microsoft YaHei'（Windows系统） 或 'SimSun'
+matplotlib.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
 # plt.style.use('ggplot')
 # 定义一个函数来读取和解析 JSONL 文件
 def read_jsonl(file_name):
@@ -12,10 +14,10 @@ def read_jsonl(file_name):
     return pd.json_normalize(data)
 
 # 文件名列表，假设你的文件放在当前目录下
-files = ['./result/replan.jsonl','./result/epom_norm_best.jsonl','./result/epom_default_best.jsonl','./result/epom_path_last.jsonl','./result/epom_norm2_best.jsonl','./result/epom_path_best.jsonl']  # 添加你的文件名
-algorithm_names = ['Replan','EPOM' ,'EPOM-default-b','EPOM-p-l','EPOM-2b', 'EPOM-p-b']
+files = ['./result/replan/replan.jsonl','./result/epom/epom-best.jsonl', './result/ASwitcher/ASwitcher.jsonl', './result/HSwitcher/HSwitcher_3.jsonl', './result/MSwitcher/MSwitcher_9.jsonl']  # 添加你的文件名
+algorithm_names = ['Replan','EPOM','ASwitcher', 'HSwitcher', 'MSwitcher']
 markers = ['o', 's', '^', 'D','v','X']  # 圆圈、正方形、向上的三角形
-linestyles = ['-', '-.', '-.', '-.','-.','-.']  # 前1实线，后三虚线
+linestyles = ['-', '--', ':', '-.','-.','-.']  # 前1实线，后三虚线
 # 解析每个文件并抽取需要的数据
 all_data = []
 
@@ -37,14 +39,15 @@ def plot_metric(metric, ylabel, title):
         data = combined_data[combined_data['Algorithm'] == name]
         plt.plot(data['num_agents'], data[metric], label=name, marker=marker, linestyle=linestyle)
         # plt.scatter(data['num_agents'], data[metric], s=50, marker=marker)  # 强调数据点
-    plt.xlabel('Number of Agents')
+    plt.xlabel('智能体数量')
     plt.ylabel(ylabel)
-    plt.title(title)
+    # plt.title(title)
     plt.legend()
     plt.grid(True)
+    plt.savefig(f'{title}.png')
     plt.show()
 
-plot_metric('total.AVG_CSR', 'Average CSR', 'Average CSR by Algorithm')
-plot_metric('total.AVG_ISR', 'Average ISR', 'Average ISR by Algorithm')
-plot_metric('total.AVG_ep_length', 'Average Episode Length', 'Average Episode Length by Algorithm')
-plot_metric('total.AVG_conflict_nums', 'Average Conflict Nums', 'Average Conflict Nums by Algorithm')
+plot_metric('total.AVG_CSR', '整体成功率', '对比-整体成功率')
+plot_metric('total.AVG_ISR', '独立成功率', '对比-独立成功率')
+plot_metric('total.AVG_ep_length', '平均回合长度', '对比-平均回合长度')
+# plot_metric('total.AVG_conflict_nums', 'Average Conflict Nums', 'Average Conflict Nums by Algorithm')

@@ -1,7 +1,9 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import json
-
+import matplotlib
+matplotlib.rcParams['font.sans-serif'] = ['Microsoft YaHei']  # 或者其他字体，如 'Microsoft YaHei'（Windows系统） 或 'SimSun'
+matplotlib.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
 # plt.style.use('ggplot')
 # 定义一个函数来读取和解析 JSONL 文件
 def read_jsonl(file_name):
@@ -37,14 +39,14 @@ def plot_metric(metric, ylabel, title):
         data = combined_data[combined_data['Algorithm'] == name]
         plt.plot(data['num_agents'], data[metric], label=name, marker=marker, linestyle=linestyle)
         # plt.scatter(data['num_agents'], data[metric], s=50, marker=marker)  # 强调数据点
-    plt.xlabel('Number of Agents')
+    plt.xlabel('智能体数量')
     plt.ylabel(ylabel)
-    plt.title(title)
+    # plt.title(title)
     plt.legend()
     plt.grid(True)
-    plt.savefig(f'{title}.png')
+    plt.savefig(f'Replan消融-{ylabel}.png')
     plt.show()
 
-plot_metric('total.AVG_CSR', 'Average CSR', 'Average CSR by Algorithm')
-plot_metric('total.AVG_ISR', 'Average ISR', 'Average ISR by Algorithm')
-plot_metric('total.AVG_ep_length', 'Average Episode Length', 'Average Episode Length by Algorithm')
+plot_metric('total.AVG_CSR', '整体成功率', 'Average CSR by Algorithm')
+plot_metric('total.AVG_ISR', '独立成功率', 'Average ISR by Algorithm')
+plot_metric('total.AVG_ep_length', '平均回合长度', 'Average Episode Length by Algorithm')

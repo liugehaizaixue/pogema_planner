@@ -6,14 +6,14 @@ def read_file(file_name):
         data = f.read()
     return data
 
-files = ['./result/replan.jsonl','./result/epom_path_se01_gru2.jsonl'] 
+files = ['./result/replan/replan.jsonl','./result/epom/epom-best.jsonl']  # 添加你的文件名
 replan_data = read_file(files[0])
 epom_data = read_file(files[1])
 # 将 JSONL 字符串分行处理，每行是一个 JSON 对象
 records_replan = [json.loads(line) for line in replan_data.strip().split('\n') if line.strip()]
-records_epom = [json.loads(line) for line in replan_data.strip().split('\n') if line.strip()]
+records_epom = [json.loads(line) for line in epom_data.strip().split('\n') if line.strip()]
 
-total_records = [('replan', records_replan) , ('epom', records_epom)]
+total_records = [ ('epom', records_epom), ('replan', records_replan) ]
 # 初始化一个空的 DataFrame
 df = pd.DataFrame(columns=[
     'num_of_agents', 'algorithm', 'sc1_ISR', 'sc1_CSR', 'sc1_avg_length',
@@ -22,7 +22,7 @@ df = pd.DataFrame(columns=[
     'mazes_ISR', 'mazes_CSR', 'mazes_avg_length',
     'random_ISR', 'random_CSR', 'random_avg_length'
 ])
-
+formatter = "{:.4f}"
 # 遍历记录并填充 DataFrame
 for algorithm_name, records in total_records:
     for record in records:
@@ -54,4 +54,4 @@ for algorithm_name, records in total_records:
 df = df.sort_values(by=['num_of_agents', 'algorithm'])
 # 输出 DataFrame，可以进一步将其导出为 Excel 文件等
 print(df)
-df.to_excel('output.xlsx', index=False)
+# df.to_excel('output.xlsx', index=False)

@@ -4,6 +4,7 @@ import json
 import matplotlib
 matplotlib.rcParams['font.sans-serif'] = ['Microsoft YaHei']  # 或者其他字体，如 'Microsoft YaHei'（Windows系统） 或 'SimSun'
 matplotlib.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
+
 # plt.style.use('ggplot')
 # 定义一个函数来读取和解析 JSONL 文件
 def read_jsonl(file_name):
@@ -14,16 +15,16 @@ def read_jsonl(file_name):
     return pd.json_normalize(data)
 
 # 文件名列表，假设你的文件放在当前目录下
-files = ['./result/epom/epom-best.jsonl','./result/epom/epom-R3.jsonl','./result/epom/epom-R1.jsonl','./result/epom/epom-No-rnn.jsonl']  # 添加你的文件名
-algorithm_names = ['EPOM(R=5)','EPOM(R=3)', 'EPOM(R=1)','EPOM(no RNN)']
-markers = ['o', 's', '^', 'D']  # 圆圈、正方形、向上的三角形
-linestyles = ['-', '-.', '-.', '-.']  # 前1实线，后三虚线
+files = ['./result/replan/replan_lifelong.jsonl','./result/epom/epom-lifelong.jsonl', './result/ASwitcher/ASwitcher_lifelong.jsonl', './result/HSwitcher/HSwitcher_lifelong.jsonl', './result/MSwitcher/MSwitcher_lifelong.jsonl']  # 添加你的文件名
+algorithm_names = ['Replan','EPOM', 'ASwitcher', 'HSwitcher', 'MSwitcher']
+markers = ['o', 's', '^', 'D','v','X']  # 圆圈、正方形、向上的三角形
+linestyles = ['-', '--', ':', '-.','-.','-.']  # 前1实线，后三虚线
 # 解析每个文件并抽取需要的数据
 all_data = []
 
 for file in files:
     df = read_jsonl(file)
-    all_data.append(df[['num_agents', 'total.AVG_CSR', 'total.AVG_ISR', 'total.AVG_ep_length']])
+    all_data.append(df[['num_agents', 'total.AVG_THROUGHPUT']])
 
 # 合并所有数据，方便比较
 combined_data = pd.concat(all_data, keys=algorithm_names)
@@ -40,13 +41,11 @@ def plot_metric(metric, ylabel, title):
         plt.plot(data['num_agents'], data[metric], label=name, marker=marker, linestyle=linestyle)
         # plt.scatter(data['num_agents'], data[metric], s=50, marker=marker)  # 强调数据点
     plt.xlabel('智能体数量')
-    plt.ylabel(ylabel)
+    plt.ylabel('平均吞吐量')
     # plt.title(title)
     plt.legend()
     plt.grid(True)
-    plt.savefig(f'EPOM视野消融图-{ylabel}.png')
+    plt.savefig(f'终身MAPF对比图.png')
     plt.show()
 
-plot_metric('total.AVG_CSR', '整体成功率', 'Average CSR by Algorithm')
-plot_metric('total.AVG_ISR', '独立成功率', 'Average ISR by Algorithm')
-plot_metric('total.AVG_ep_length', '平均回合长度', 'Average Episode Length by Algorithm')
+plot_metric('total.AVG_THROUGHPUT', 'AVG_THROUGHPUT', 'Average THROUGHPUT by Algorithm')

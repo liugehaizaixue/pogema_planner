@@ -3,7 +3,7 @@ import matplotlib
 import pandas as pd
 import json
 
-matplotlib.rcParams['font.sans-serif'] = ['SimHei']  # 或者其他字体，如 'Microsoft YaHei'（Windows系统） 或 'SimSun'
+matplotlib.rcParams['font.sans-serif'] = ['Microsoft YaHei']  # 或者其他字体，如 'Microsoft YaHei'（Windows系统） 或 'SimSun'
 matplotlib.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
 
 
@@ -41,10 +41,10 @@ ms_positions = positions
 
 
 plt.bar(replan_positions, df['replan_step_per_sec'], width=width, label='Replan')
-plt.bar(epom_positions, df['epom_step_per_sec'], width=width, label='Epom')
-plt.bar(as_positions, df['AS_step_per_sec'], width=width, label='AS')
-plt.bar(hs_positions, df['HS_step_per_sec'], width=width, label='HS')
-plt.bar(ms_positions, df['MS_step_per_sec'], width=width, label='MS')
+plt.bar(epom_positions, df['epom_step_per_sec'], width=width, label='EPOM')
+plt.bar(as_positions, df['AS_step_per_sec'], width=width, label='ASwitcher')
+plt.bar(hs_positions, df['HS_step_per_sec'], width=width, label='HSwitcher')
+plt.bar(ms_positions, df['MS_step_per_sec'], width=width, label='MSwitcher')
 
 plt.xlabel('智能体数量')
 plt.ylabel('每秒执行次数')

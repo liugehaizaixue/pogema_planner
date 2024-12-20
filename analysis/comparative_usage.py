@@ -1,9 +1,8 @@
 import matplotlib.pyplot as plt
-import matplotlib
 import pandas as pd
 import json
-
-matplotlib.rcParams['font.sans-serif'] = ['SimHei']  # 或者其他字体，如 'Microsoft YaHei'（Windows系统） 或 'SimSun'
+import matplotlib
+matplotlib.rcParams['font.sans-serif'] = ['Microsoft YaHei']  # 或者其他字体，如 'Microsoft YaHei'（Windows系统） 或 'SimSun'
 matplotlib.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
 
 
@@ -31,8 +30,6 @@ for i in range(len(as_data)):
     total_data.append(data)
 
 
-matplotlib.rcParams['font.sans-serif'] = ['SimHei']  # 或者其他字体，如 'Microsoft YaHei'（Windows系统） 或 'SimSun'
-matplotlib.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
 
 df = pd.DataFrame(total_data)
 
@@ -49,4 +46,5 @@ plt.ylabel('EPOM 使用率')
 # plt.title(title)
 plt.legend()
 plt.grid(True)
+plt.savefig('EPOM使用率比较图.png')
 plt.show()
