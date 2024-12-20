@@ -13,8 +13,8 @@ def read_jsonl(file_name):
 
 # 文件名列表，假设你的文件放在当前目录下
 files = ['./result/epom/epom-best.jsonl','./result/epom/epom-default-best.jsonl',
-         './result/epom/epom-no-direction-best.jsonl', './result/epom/epom-default-no-direction-best.jsonl']  # 添加你的文件名
-algorithm_names = ['EPOM' ,'EPOM-default-b','EPOM-no-direct-b','EPOM-default-no-direct-b']
+         './result/epom/epom-no-direction-best.jsonl', './result/epom/epom_网格记忆消融_best.jsonl']  # 添加你的文件名
+algorithm_names = ['EPOM' ,'EPOM (filled with 0)','EPOM (no direction)','EPOM (no Grid Memory)']
 markers = ['o', 's', '^', 'D','v','X']  # 圆圈、正方形、向上的三角形
 linestyles = ['-', '-.', '-.', '-.','-.','-.']  # 前1实线，后三虚线
 # 解析每个文件并抽取需要的数据
@@ -43,9 +43,10 @@ def plot_metric(metric, ylabel, title):
     plt.title(title)
     plt.legend()
     plt.grid(True)
+    plt.savefig(f'{ylabel}-epom.png')
     plt.show()
 
 plot_metric('total.AVG_CSR', 'Average CSR', 'Average CSR by Algorithm')
 plot_metric('total.AVG_ISR', 'Average ISR', 'Average ISR by Algorithm')
 plot_metric('total.AVG_ep_length', 'Average Episode Length', 'Average Episode Length by Algorithm')
-plot_metric('total.AVG_conflict_nums', 'Average Conflict Nums', 'Average Conflict Nums by Algorithm')
+# plot_metric('total.AVG_conflict_nums', 'Average Conflict Nums', 'Average Conflict Nums by Algorithm')
