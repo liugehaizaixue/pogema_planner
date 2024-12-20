@@ -7,3 +7,5 @@ wandb/
 weights/
 
 test.py
+*.png
+*.xlsx
