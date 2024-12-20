@@ -46,8 +46,8 @@ plt.bar(as_positions, df['AS_step_per_sec'], width=width, label='ASwitcher')
 plt.bar(hs_positions, df['HS_step_per_sec'], width=width, label='HSwitcher')
 plt.bar(ms_positions, df['MS_step_per_sec'], width=width, label='MSwitcher')
 
-plt.xlabel('智能体数量')
-plt.ylabel('每秒执行次数')
+plt.xlabel('智能体数量', fontsize=14)
+plt.ylabel('每秒执行次数', fontsize=14)
 # plt.title('Comparison of Replan and Epom Seconds by Step')
 plt.xticks(positions)  # Ensure ticks match steps
 plt.legend()

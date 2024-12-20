@@ -40,8 +40,8 @@ def plot_metric(metric, ylabel, title):
         data = combined_data[combined_data['Algorithm'] == name]
         plt.plot(data['num_agents'], data[metric], label=name, marker=marker, linestyle=linestyle)
         # plt.scatter(data['num_agents'], data[metric], s=50, marker=marker)  # 强调数据点
-    plt.xlabel('智能体数量')
-    plt.ylabel('平均吞吐量')
+    plt.xlabel('智能体数量', fontsize=14)
+    plt.ylabel('平均吞吐量', fontsize=14)
     # plt.title(title)
     plt.legend()
     plt.grid(True)
