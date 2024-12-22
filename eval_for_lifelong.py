@@ -5,17 +5,18 @@ from pomapf_env.custom_maps import MAPS_REGISTRY , _test_regexp
 import re
 import time
 import signal
-# from agents.epom import EPOM , EpomConfig
+from agents.epom import EPOM , EpomConfig
 from agents.replan import RePlan , RePlanConfig
-# from agents.assistant_switcher import AssistantSwitcher , ASwitcherConfig
-# from agents.heuristic_switcher import HeuristicSwitcher , HSwitcherConfig
-# from agents.density_switcher import DensitySwitcher , DSwitcherConfig
-# from agents.memory_switcher import MemorySwitcher , MSwitcherConfig
+from agents.assistant_switcher import AssistantSwitcher , ASwitcherConfig
+from agents.heuristic_switcher import HeuristicSwitcher , HSwitcherConfig
+from agents.density_switcher import DensitySwitcher , DSwitcherConfig
+from agents.memory_switcher import MemorySwitcher , MSwitcherConfig
+from agents.learnable_switcher import LearnableSwitcher , LSwitcherConfig
 from agents.utils_eval import eval_algorithm
 from multiprocessing import Pool, cpu_count
 import json
 from tqdm import tqdm
-
+# os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 SEEDS = 10
 def get_algo_by_name(algo_name):
     if algo_name == "Replan":
@@ -30,6 +31,8 @@ def get_algo_by_name(algo_name):
         algo = DensitySwitcher(DSwitcherConfig(learning=EpomConfig(path_to_weights=str('./' / Path('weights/epom')))))
     elif algo_name == "MSwitcher":
         algo = MemorySwitcher(MSwitcherConfig(learning=EpomConfig(path_to_weights=str('./' / Path('weights/epom')))))
+    elif algo_name == "LSwitcher":
+        algo = LearnableSwitcher(LSwitcherConfig())
     return algo
 
 def get_test_maps():

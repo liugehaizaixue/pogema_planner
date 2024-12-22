@@ -11,11 +11,12 @@ from agents.assistant_switcher import AssistantSwitcher , ASwitcherConfig
 from agents.heuristic_switcher import HeuristicSwitcher , HSwitcherConfig
 from agents.density_switcher import DensitySwitcher , DSwitcherConfig
 from agents.memory_switcher import MemorySwitcher , MSwitcherConfig
+from agents.learnable_switcher import LearnableSwitcher , LSwitcherConfig
 from agents.utils_eval import eval_algorithm
 from multiprocessing import Pool, cpu_count
 import json
 from tqdm import tqdm
-
+# os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 SEEDS = 1
 def get_algo_by_name(algo_name):
     if algo_name == "Replan":
@@ -30,6 +31,8 @@ def get_algo_by_name(algo_name):
         algo = DensitySwitcher(DSwitcherConfig(learning=EpomConfig(path_to_weights=str('./' / Path('weights/epom')))))
     elif algo_name == "MSwitcher":
         algo = MemorySwitcher(MSwitcherConfig(learning=EpomConfig(path_to_weights=str('./' / Path('weights/epom')))))
+    elif algo_name == "LSwitcher":
+        algo = LearnableSwitcher(LSwitcherConfig())
     return algo
 
 def get_test_maps():
@@ -99,7 +102,7 @@ def main():
     # os.environ['OMP_NUM_THREADS'] = "1"
     # os.environ['MKL_NUM_THREADS'] = "1"
     current_time = time.strftime('%Y_%m_%d_%H_%M_%S',time.localtime(time.time()))
-    algo_list = ["Replan" , "EPOM"]
+    algo_list = ["LSwitcher"]
 
     score_table = PrettyTable()
     score_table.field_names = ["Algorithm", "Num of Agents","Avg ISR", "Avg CSR", "Avg Episode Length", "Avg ConflictNums","AVG planning", "AVG learning"]
