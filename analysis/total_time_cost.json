@@ -2,97 +2,121 @@
     {
         "step": 32,
         "replan_seconds": 997,
-        "epom_seconds": 182,
+        "epom_seconds": 175.1383719444275,
         "as_seconds": 796.2546503543854,
         "hs_seconds": 825.1124677658081,
-        "ms_seconds": 906.9644656181335
+        "ms_seconds": 906.9644656181335,
+        "v-epom_seconds": 182,
+        "ls_seconds": 990.4625735282898
     },
     {
         "step": 64,
         "replan_seconds": 1991,
-        "epom_seconds": 326,
+        "epom_seconds": 320.3349006175995,
         "as_seconds": 1836.9363663196564,
         "hs_seconds": 1946.4793314933777,
-        "ms_seconds": 2280.170201063156
+        "ms_seconds": 2280.170201063156,
+        "v-epom_seconds": 326,
+        "ls_seconds": 2202.90855884552
     },
     {
         "step": 96,
         "replan_seconds": 2842,
-        "epom_seconds": 471,
+        "epom_seconds": 474.0465090274811,
         "as_seconds": 2795.996476173401,
         "hs_seconds": 3193.3111534118652,
-        "ms_seconds": 3873.5077543258667
+        "ms_seconds": 3873.5077543258667,
+        "v-epom_seconds": 471,
+        "ls_seconds": 3881.738940477371
     },
     {
         "step": 128,
         "replan_seconds": 3864,
-        "epom_seconds": 608,
+        "epom_seconds": 617.9824593067169,
         "as_seconds": 3666.539364337921,
         "hs_seconds": 3984.8700494766235,
-        "ms_seconds": 5744.0378296375275
+        "ms_seconds": 5744.0378296375275,
+        "v-epom_seconds": 608,
+        "ls_seconds": 4748.875705242157
     },
     {
         "step": 160,
         "replan_seconds": 5043,
-        "epom_seconds": 748,
+        "epom_seconds": 764.7713766098022,
         "as_seconds": 4499.065454721451,
         "hs_seconds": 5093.141771316528,
-        "ms_seconds": 6797.9419112205505
+        "ms_seconds": 6797.9419112205505,
+        "v-epom_seconds": 748,
+        "ls_seconds": 6183.538041114807
     },
     {
         "step": 192,
         "replan_seconds": 5780,
-        "epom_seconds": 890,
+        "epom_seconds": 915.8717174530029,
         "as_seconds": 5857.125861167908,
         "hs_seconds": 5795.398320436478,
-        "ms_seconds": 8316.715752601624
+        "ms_seconds": 8316.715752601624,
+        "v-epom_seconds": 890,
+        "ls_seconds": 6482.405355453491
     },
     {
         "step": 224,
         "replan_seconds": 6693,
-        "epom_seconds": 1029,
+        "epom_seconds": 1057.6896102428436,
         "as_seconds": 6403.8353536129,
         "hs_seconds": 7257.78561425209,
-        "ms_seconds": 8974.317859649658
+        "ms_seconds": 8974.317859649658,
+        "v-epom_seconds": 1029,
+        "ls_seconds": 8223.562867164612
     },
     {
         "step": 256,
         "replan_seconds": 7648,
-        "epom_seconds": 1174,
+        "epom_seconds": 1206.7215373516083,
         "as_seconds": 7318.697260379791,
         "hs_seconds": 7773.722602367401,
-        "ms_seconds": 10502.973241567612
+        "ms_seconds": 10502.973241567612,
+        "v-epom_seconds": 1174,
+        "ls_seconds": 8950.211093902588
     },
     {
         "step": 288,
         "replan_seconds": 8297,
-        "epom_seconds": 1317,
+        "epom_seconds": 1360.8588054180145,
         "as_seconds": 8355.622098207474,
         "hs_seconds": 8569.94480228424,
-        "ms_seconds": 10130.1881980896
+        "ms_seconds": 10130.1881980896,
+        "v-epom_seconds": 1317,
+        "ls_seconds": 11392.587325811386
     },
     {
         "step": 320,
         "replan_seconds": 9622,
-        "epom_seconds": 1478,
+        "epom_seconds": 1530.0960109233856,
         "as_seconds": 9496.573758602142,
         "hs_seconds": 9413.32653594017,
-        "ms_seconds": 10845.120506286621
+        "ms_seconds": 10845.120506286621,
+        "v-epom_seconds": 1478,
+        "ls_seconds": 11918.254902362823
     },
     {
         "step": 352,
         "replan_seconds": 10678,
-        "epom_seconds": 1621,
+        "epom_seconds": 1680.8082027435303,
         "as_seconds": 10609.573807001114,
         "hs_seconds": 10011.863962650299,
-        "ms_seconds": 12361.558915376663
+        "ms_seconds": 12361.558915376663,
+        "v-epom_seconds": 1621,
+        "ls_seconds": 11180.110442876816
     },
     {
         "step": 384,
         "replan_seconds": 11259,
-        "epom_seconds": 1771,
+        "epom_seconds": 1855.0770528316498,
         "as_seconds": 10820.479247570038,
         "hs_seconds": 10702.42347073555,
-        "ms_seconds": 13051.79246711731
+        "ms_seconds": 13051.79246711731,
+        "v-epom_seconds": 1771,
+        "ls_seconds": 12689.272148132324
     }
 ]

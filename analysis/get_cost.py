@@ -15,18 +15,19 @@ df = pd.DataFrame(data)
 
 
 df['replan_step_per_sec'] = df['step']*512*10 / df['replan_seconds']
-df['epom_step_per_sec'] = df['step']*512*10 / df['epom_seconds']
+df['v-epom_step_per_sec'] = df['step']*512*10 / df['v-epom_seconds']
 df['AS_step_per_sec'] = df['step']*512*10 / df['as_seconds']
 df['HS_step_per_sec'] = df['step']*512*10 / df['hs_seconds']
 df['MS_step_per_sec'] = df['step']*512*10 / df['ms_seconds']
-
+df['LS_step_per_sec'] = df['step']*512*10 / df['ls_seconds']
+df['epom_step_per_sec'] = df['step']*512*10 / df['epom_seconds']
 
 print(df)
 
 
 # # Plotting
 plt.figure(figsize=(10, 6))
-width = 5  # width of the bars
+width = 3  # width of the bars
 
 # Positions for the bars
 positions = df['step'].values
@@ -34,10 +35,12 @@ offset = width   # 设置错位的偏移量
 
 # 每个数据集的偏移位置
 replan_positions = positions + offset
-epom_positions = positions - offset
+v_epom_positions = positions - offset
 as_positions = positions + 2 * offset
 hs_positions = positions - 2 * offset
 ms_positions = positions
+ls_positions = positions - 3 * offset
+epom_positions = positions+3*offset
 
 
 plt.bar(replan_positions, df['replan_step_per_sec'], width=width, label='Replan')
@@ -45,6 +48,8 @@ plt.bar(epom_positions, df['epom_step_per_sec'], width=width, label='EPOM')
 plt.bar(as_positions, df['AS_step_per_sec'], width=width, label='ASwitcher')
 plt.bar(hs_positions, df['HS_step_per_sec'], width=width, label='HSwitcher')
 plt.bar(ms_positions, df['MS_step_per_sec'], width=width, label='MSwitcher')
+plt.bar(ls_positions, df['LS_step_per_sec'], width=width, label='LSwitcher')
+plt.bar(v_epom_positions, df['v-epom_step_per_sec'], width=width, label='V-EPOM')
 
 plt.xlabel('智能体数量', fontsize=14)
 plt.ylabel('每秒执行次数', fontsize=14)
