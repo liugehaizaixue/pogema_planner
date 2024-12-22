@@ -44,12 +44,13 @@ epom_positions = positions+3*offset
 
 
 plt.bar(replan_positions, df['replan_step_per_sec'], width=width, label='Replan')
-plt.bar(epom_positions, df['epom_step_per_sec'], width=width, label='EPOM')
+plt.bar(v_epom_positions, df['v-epom_step_per_sec'], width=width, label='V-EPOM')
+plt.bar(ms_positions, df['MS_step_per_sec'], width=width, label='MSwitcher')
 plt.bar(as_positions, df['AS_step_per_sec'], width=width, label='ASwitcher')
 plt.bar(hs_positions, df['HS_step_per_sec'], width=width, label='HSwitcher')
-plt.bar(ms_positions, df['MS_step_per_sec'], width=width, label='MSwitcher')
 plt.bar(ls_positions, df['LS_step_per_sec'], width=width, label='LSwitcher')
-plt.bar(v_epom_positions, df['v-epom_step_per_sec'], width=width, label='V-EPOM')
+plt.bar(epom_positions, df['epom_step_per_sec'], width=width, label='EPOM')
+
 
 plt.xlabel('智能体数量', fontsize=14)
 plt.ylabel('每秒执行次数', fontsize=14)
